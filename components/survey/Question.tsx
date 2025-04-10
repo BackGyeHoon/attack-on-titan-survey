@@ -4,7 +4,9 @@ interface QuestionProps {
   question: string;
   options: string[];
   onAnswer: (answer: string) => void;
-  questionIndex: number;
+  questionIndex?: number;
+  questionNumber?: number;
+  totalQuestions?: number;
 }
 
 // 진격의 거인 명대사 배열
@@ -32,6 +34,8 @@ export function Question({
   options,
   onAnswer,
   questionIndex,
+  questionNumber,
+  totalQuestions,
 }: QuestionProps) {
   // 클라이언트 사이드에서만 렌더링되도록 상태 설정
   const [quote, setQuote] = useState<string>("");
@@ -42,9 +46,10 @@ export function Question({
   useEffect(() => {
     setMounted(true);
     const randomOffset = Math.floor(Math.random() * 3);
-    const quoteIndex = (questionIndex + randomOffset) % famousQuotes.length;
+    const index = questionIndex ?? (questionNumber ? questionNumber - 1 : 0);
+    const quoteIndex = (index + randomOffset) % famousQuotes.length;
     setQuote(famousQuotes[quoteIndex]);
-  }, [questionIndex]);
+  }, [questionIndex, questionNumber]);
 
   // 중복 클릭 방지 및 이벤트 처리 최적화
   const handleAnswerClick = (e: React.MouseEvent, option: string) => {

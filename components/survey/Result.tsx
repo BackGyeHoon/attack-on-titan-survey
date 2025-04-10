@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-interface ResultProps {
-  character: string;
+// Character 인터페이스 추가
+interface Character {
+  name: string;
   description: string;
+  image?: string;
+  compatibleCharacters?: string[];
+  incompatibleCharacter?: string;
+}
+
+interface ResultProps {
+  character: string | Character;
+  description?: string;
   image?: string;
   onReset: () => void;
   compatibleCharacters?: string[];
@@ -261,6 +270,11 @@ const commonQuotes = [
   "죽은 자는 이야기하지 않는다. 그러남 그들의 선택은 살아남은 자들에게 의미를 준다.",
 ];
 
+// Character 타입을 처리하는 함수 추가
+const getCharacterName = (character: string | Character): string => {
+  return typeof character === 'string' ? character : character.name;
+};
+
 export function Result({
   character,
   description,
@@ -269,30 +283,65 @@ export function Result({
   compatibleCharacters = [],
   incompatibleCharacter = "",
 }: ResultProps) {
+  const characterName = getCharacterName(character);
+  
   const [imageError, setImageError] = useState(false);
   const [characterImg, setCharacterImg] = useState<string | null>(null);
   const [quote, setQuote] = useState<string>("");
-  const [localIncompatible, setLocalIncompatible] = useState<string>(incompatibleCharacter);
+  const [localIncompatible, setLocalIncompatible] = useState<string>(
+    typeof incompatibleCharacter === 'string' ? incompatibleCharacter : ""
+  );
+  const [shareMessage, setShareMessage] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (character && !image) {
-      const img = getDefaultImage(character);
+    if (!image) {
+      const img = getDefaultImage(characterName);
       setCharacterImg(img);
     } else {
       setCharacterImg(image || null);
     }
 
-    const quotes = characterQuotes[character] || commonQuotes;
+    const quotes = characterQuotes[characterName] || commonQuotes;
     const randomIndex = Math.floor(Math.random() * quotes.length);
     setQuote(quotes[randomIndex]);
 
     if (!incompatibleCharacter) {
       const characterNames = Object.keys(characterQuotes);
-      const filteredChars = characterNames.filter((name) => name !== character);
+      const filteredChars = characterNames.filter((name) => name !== characterName);
       const randomChar = filteredChars[Math.floor(Math.random() * filteredChars.length)];
       setLocalIncompatible(randomChar);
     }
   }, [character, image, incompatibleCharacter]);
+  
+  // handleShare 함수 수정
+  const handleShare = async () => {
+    try {
+      // 현재 URL에 캐릭터 이름만 쿼리 파라미터로 추가
+      const url = new URL(window.location.href);
+      
+      // 기존 쿼리 파라미터 제거
+      url.search = '';
+      
+      // 캐릭터 이름 쿼리 파라미터로 추가
+      url.searchParams.set('char', characterName);
+      
+      // 클립보드에 간소화된 URL 복사
+      await navigator.clipboard.writeText(url.toString());
+      setShareMessage(`"${characterName}" 결과 URL이 복사되었습니다. 원하는 곳에 붙여넣으세요!`);
+      setShowModal(true);
+    } catch (error) {
+      console.error("URL 복사 중 오류 발생:", error);
+      setShareMessage("URL 복사에 실패했습니다. 다시 시도해 주세요.");
+      setShowModal(true);
+    }
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setShowModal(false);
+    setShareMessage("");
+  };
 
   const getDefaultImage = (name: string) => {
     const characterMap: Record<string, string> = {
@@ -492,7 +541,7 @@ export function Result({
     );
   };
 
-  const attributes = getAttributes(character);
+  const attributes = getAttributes(characterName);
 
   const characterRelationships: Record<
     string,
@@ -735,7 +784,7 @@ export function Result({
     return characterRelationships[name] || defaultRelationships;
   };
 
-  const relationships = getRelationships(character);
+  const relationships = getRelationships(characterName);
 
   const displayCompatible =
     compatibleCharacters.length > 0
@@ -758,121 +807,161 @@ export function Result({
   };
 
   return (
-    <div className="text-center">
-      <div className="flex items-center justify-center mb-6">
-        <div className="h-px bg-primary flex-grow"></div>
-        <h2 className="titan-header text-2xl mx-4">결과</h2>
-        <div className="h-px bg-primary flex-grow"></div>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="titan-header text-xl mb-6">{character}</h2>
-
-        {!imageError && characterImg ? (
-          <div className="avatar-container mb-6">
-            <Image
-              src={characterImg}
-              alt={character}
-              width={200}
-              height={200}
-              objectFit="cover"
-              className="avatar-image"
-              onError={() => setImageError(true)}
-            />
-          </div>
-        ) : (
-          <div className="default-avatar mb-6">
-            <div className="avatar-initials">{character.charAt(0)}</div>
-          </div>
-        )}
-
-        <div className="mb-8 p-5 bg-primary-light bg-opacity-30 rounded-md">
-          <p className="text-muted italic mb-3 font-medium">
-            &ldquo;{quote}&rdquo;
-          </p>
-          <p className="text-foreground">{description}</p>
+    <div className="result-container animate-fade-in">
+      <div className="text-center">
+        <div className="flex items-center justify-center mb-6">
+          <div className="h-px bg-primary flex-grow"></div>
+          <h2 className="titan-header text-2xl mx-4">결과</h2>
+          <div className="h-px bg-primary flex-grow"></div>
         </div>
 
         <div className="mb-8">
-          <h3 className="titan-header text-lg mb-4">주요 특성</h3>
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">전투력</span>
-                <span className="text-sm text-primary font-medium">
-                  {attributes.strength}/10
-                </span>
-              </div>
-              <div className="stat-bar-container">
-                <div
-                  className="stat-bar stat-bar-strength"
-                  style={{ width: `${attributes.strength * 10}%` }}
-                ></div>
-              </div>
+          <h2 className="titan-header text-xl mb-6">{character}</h2>
+
+          {!imageError && characterImg ? (
+            <div className="avatar-container mb-6">
+              <Image
+                src={characterImg}
+                alt={character}
+                width={200}
+                height={200}
+                objectFit="cover"
+                className="avatar-image"
+                onError={() => setImageError(true)}
+              />
             </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">지능</span>
-                <span className="text-sm text-accent font-medium">
-                  {attributes.intelligence}/10
-                </span>
-              </div>
-              <div className="stat-bar-container">
-                <div
-                  className="stat-bar stat-bar-intelligence"
-                  style={{ width: `${attributes.intelligence * 10}%` }}
-                ></div>
-              </div>
+          ) : (
+            <div className="default-avatar mb-6">
+              <div className="avatar-initials">{character.charAt(0)}</div>
             </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">리더십</span>
-                <span className="text-sm text-green-500 font-medium">
-                  {attributes.leadership}/10
-                </span>
+          )}
+
+          <div className="mb-8 p-5 bg-primary-light bg-opacity-30 rounded-md">
+            <p className="text-muted italic mb-3 font-medium">
+              &ldquo;{quote}&rdquo;
+            </p>
+            <p className="text-foreground">{description}</p>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="titan-header text-lg mb-4">주요 특성</h3>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">전투력</span>
+                  <span className="text-sm text-primary font-medium">
+                    {attributes.strength}/10
+                  </span>
+                </div>
+                <div className="stat-bar-container">
+                  <div
+                    className="stat-bar stat-bar-strength"
+                    style={{ width: `${attributes.strength * 10}%` }}
+                  ></div>
+                </div>
               </div>
-              <div className="stat-bar-container">
-                <div
-                  className="stat-bar stat-bar-leadership"
-                  style={{ width: `${attributes.leadership * 10}%` }}
-                ></div>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">지능</span>
+                  <span className="text-sm text-accent font-medium">
+                    {attributes.intelligence}/10
+                  </span>
+                </div>
+                <div className="stat-bar-container">
+                  <div
+                    className="stat-bar stat-bar-intelligence"
+                    style={{ width: `${attributes.intelligence * 10}%` }}
+                  ></div>
+                </div>
               </div>
-            </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">공감능력</span>
-                <span className="text-sm text-yellow-500 font-medium">
-                  {attributes.compassion}/10
-                </span>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">리더십</span>
+                  <span className="text-sm text-green-500 font-medium">
+                    {attributes.leadership}/10
+                  </span>
+                </div>
+                <div className="stat-bar-container">
+                  <div
+                    className="stat-bar stat-bar-leadership"
+                    style={{ width: `${attributes.leadership * 10}%` }}
+                  ></div>
+                </div>
               </div>
-              <div className="stat-bar-container">
-                <div
-                  className="stat-bar stat-bar-compassion"
-                  style={{ width: `${attributes.compassion * 10}%` }}
-                ></div>
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">공감능력</span>
+                  <span className="text-sm text-yellow-500 font-medium">
+                    {attributes.compassion}/10
+                  </span>
+                </div>
+                <div className="stat-bar-container">
+                  <div
+                    className="stat-bar stat-bar-compassion"
+                    style={{ width: `${attributes.compassion * 10}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="mb-8">
-          <h3 className="titan-header text-lg mb-4">캐릭터 상성</h3>
+          <div className="mb-8">
+            <h3 className="titan-header text-lg mb-4">캐릭터 상성</h3>
 
-          <div className="p-4 bg-white bg-opacity-15 rounded-md mb-4 border-2 border-green-500">
-            <h4 className="text-green-500 text-base font-bold mb-2">
-              잘 맞는 캐릭터
-            </h4>
-            <div className="flex flex-wrap justify-center gap-4">
-              {displayCompatible.map((compatChar, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center bg-white bg-opacity-20 px-3 py-3 rounded-md shadow-md border border-green-400"
-                >
-                  <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-green-400">
-                    {getDefaultImage(compatChar) ? (
+            <div className="p-4 bg-white bg-opacity-15 rounded-md mb-4 border-2 border-green-500">
+              <h4 className="text-green-500 text-base font-bold mb-2">
+                잘 맞는 캐릭터
+              </h4>
+              <div className="flex flex-wrap justify-center gap-4">
+                {displayCompatible.map((compatChar, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center bg-white bg-opacity-20 px-3 py-3 rounded-md shadow-md border border-green-400"
+                  >
+                    <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-green-400">
+                      {getDefaultImage(compatChar) ? (
+                        <Image
+                          src={getDefaultImage(compatChar) || ""}
+                          alt={compatChar}
+                          width={64}
+                          height={64}
+                          objectFit="cover"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-bold">
+                          {compatChar.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-center text-white">
+                      {compatChar}
+                    </span>
+                    <p className="text-xs text-white mt-2 text-center px-1">
+                      {getCompatibleReason(compatChar)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-white mt-2 bg-green-600 bg-opacity-80 p-2 rounded-md">
+                이 캐릭터들과 함께하면 더 큰 시너지를 발휘할 수 있습니다.
+              </p>
+            </div>
+
+            <div className="p-4 bg-white bg-opacity-15 rounded-md border-2 border-red-500">
+              <h4 className="text-red-500 text-base font-bold mb-2">
+                잘 안 맞는 캐릭터
+              </h4>
+              <div className="flex justify-center">
+                <div className="flex flex-col items-center bg-white bg-opacity-20 px-4 py-3 rounded-md shadow-md border border-red-400">
+                  <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-red-400">
+                    {getDefaultImage(finalIncompatible) ? (
                       <Image
-                        src={getDefaultImage(compatChar) || ""}
-                        alt={compatChar}
+                        src={getDefaultImage(finalIncompatible) || ""}
+                        alt={finalIncompatible}
                         width={64}
                         height={64}
                         objectFit="cover"
@@ -883,85 +972,96 @@ export function Result({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-bold">
-                        {compatChar.charAt(0)}
+                        {finalIncompatible.charAt(0)}
                       </div>
                     )}
                   </div>
-                  <span className="text-sm font-medium text-center text-white">
-                    {compatChar}
+                  <span className="text-sm font-medium text-white">
+                    {finalIncompatible}
                   </span>
                   <p className="text-xs text-white mt-2 text-center px-1">
-                    {getCompatibleReason(compatChar)}
+                    {getIncompatibleReason()}
                   </p>
                 </div>
-              ))}
-            </div>
-            <p className="text-xs text-white mt-2 bg-green-600 bg-opacity-80 p-2 rounded-md">
-              이 캐릭터들과 함께하면 더 큰 시너지를 발휘할 수 있습니다.
-            </p>
-          </div>
-
-          <div className="p-4 bg-white bg-opacity-15 rounded-md border-2 border-red-500">
-            <h4 className="text-red-500 text-base font-bold mb-2">
-              잘 안 맞는 캐릭터
-            </h4>
-            <div className="flex justify-center">
-              <div className="flex flex-col items-center bg-white bg-opacity-20 px-4 py-3 rounded-md shadow-md border border-red-400">
-                <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-red-400">
-                  {getDefaultImage(finalIncompatible) ? (
-                    <Image
-                      src={getDefaultImage(finalIncompatible) || ""}
-                      alt={finalIncompatible}
-                      width={64}
-                      height={64}
-                      objectFit="cover"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-bold">
-                      {finalIncompatible.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <span className="text-sm font-medium text-white">
-                  {finalIncompatible}
-                </span>
-                <p className="text-xs text-white mt-2 text-center px-1">
-                  {getIncompatibleReason()}
-                </p>
               </div>
+              <p className="text-xs text-white mt-2 bg-red-600 bg-opacity-80 p-2 rounded-md">
+                이 캐릭터와는 가치관이나 행동방식에서 충돌이 있을 수 있습니다.
+              </p>
             </div>
-            <p className="text-xs text-white mt-2 bg-red-600 bg-opacity-80 p-2 rounded-md">
-              이 캐릭터와는 가치관이나 행동방식에서 충돌이 있을 수 있습니다.
-            </p>
           </div>
         </div>
-      </div>
 
-      <button
-        onClick={onReset}
-        className="titan-button px-6 py-3 rounded-md flex items-center mx-auto"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2"
-        >
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-          <path d="M3 3v5h5"></path>
-        </svg>
-        다시 검사하기
-      </button>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+          <button
+            onClick={onReset}
+            className="titan-button px-6 py-3 rounded-md flex items-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-2"
+            >
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            다시 검사하기
+          </button>
+          
+          <button
+            onClick={handleShare}
+            className="titan-button px-6 py-3 rounded-md flex items-center bg-primary text-white"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-2"
+            >
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+            결과 공유하기
+          </button>
+        </div>
+        
+        {/* 모달 형태의 알림 창 */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full mx-4 border-2 border-primary">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">알림</h3>
+                <div className="mt-3">
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    {shareMessage}
+                  </p>
+                </div>
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={closeModal}
+                  className="titan-button px-4 py-2 rounded-md bg-primary text-white"
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

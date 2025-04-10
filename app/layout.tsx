@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
     images: [
       {
-        url: "/images/og-image.webp",
+        url: "/api/og",
         width: 1200,
         height: 630,
         alt: "진격의 거인 캐릭터 테스트",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "진격의 거인 캐릭터 테스트",
     description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
-    images: ["/images/og-image.webp"],
+    images: ["/api/og"],
   },
 };
 
@@ -44,8 +44,10 @@ export default function RootLayout({
         {/* 필요한 폰트는 globals.css에 import되어 있음 */}
       </head>
       <body>
+        {/* 비디오 배경 제거 */}
+        
         <div className="content-container">
-          <header className="text-center mb-6">
+          <header className="text-center mb-6 p-4 rounded-lg bg-black bg-opacity-50">
             <div className="flex items-center justify-center">
               <div className="h-1 bg-primary flex-grow opacity-50 max-w-[100px]"></div>
               <h1 className="titan-header text-3xl mx-4 tracking-wide">
@@ -58,7 +60,7 @@ export default function RootLayout({
 
           <main>{children}</main>
 
-          <footer className="text-center mt-12 text-xs text-muted">
+          <footer className="text-center mt-12 text-xs text-muted p-2 rounded-lg bg-black bg-opacity-50">
             <p>&copy; 2025 진격의 거인 캐릭터 테스트</p>
             <p className="mt-1">
               이 사이트는 애니메이션 &quot;진격의 거인&quot;의 팬 제작

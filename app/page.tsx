@@ -4,6 +4,15 @@ import { useState, useEffect, useCallback } from "react";
 import { Question } from "../components/survey/Question";
 import { Result } from "../components/survey/Result";
 
+// Character 인터페이스 정의
+interface Character {
+  name: string;
+  description: string;
+  image?: string;
+  compatibleCharacters?: string[];
+  incompatibleCharacter?: string;
+}
+
 // 간단한 설문 데이터
 const questions = [
   {
@@ -116,7 +125,7 @@ const questions = [
 ];
 
 // 확장된 캐릭터 결과
-const characters = [
+const characters: Character[] = [
   {
     name: "에렌 예거",
     description:
@@ -242,213 +251,63 @@ const characters = [
 export default function Home() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [result, setResult] = useState<{
-    name: string;
-    description: string;
-    compatibleCharacters?: string[];
-    incompatibleCharacter?: string;
-  } | null>(null);
-  const [progressClass, setProgressClass] = useState("question-progress-0");
-  const [cracksVisible, setCracksVisible] = useState<number[]>([]);
+  const [result, setResult] = useState<Character | null>(null);
 
-  // 파편 효과 생성 함수
-  const createDebrisEffect = useCallback(() => {
-    if (typeof document === 'undefined') return;
-    
-    const container = document.getElementById('survey-container');
-    if (!container) return;
-    
-    // 각 질문마다 다른 수의 파편 생성 (진행도에 따라 더 많이 생성)
-    const baseDebris = 3 + Math.floor((currentQuestion / questions.length) * 10); // 3~13개
-    const numberOfDebris = baseDebris + Math.floor(Math.random() * 5); // 약간의 랜덤성 추가
-    
-    for (let i = 0; i < numberOfDebris; i++) {
-      const debris = document.createElement('div');
-      debris.className = 'wall-debris';
+  // URL 쿼리 파라미터로부터 결과 복원
+  useEffect(() => {
+    // URL에서 쿼리 파라미터 확인
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      const charParam = url.searchParams.get('char');
       
-      // 랜덤 위치와 크기 (화면 전체에 분산)
-      const size = Math.floor(Math.random() * 8) + 4; // 4px ~ 12px
-      debris.style.width = `${size}px`;
-      debris.style.height = `${size}px`;
-      
-      // 더 넓은 범위에 파편 분산
-      const section = currentQuestion % 4; // 화면을 4개 구역으로 나눔
-      const sectionWidth = 100 / 4;
-      const leftBase = section * sectionWidth;
-      debris.style.left = `${leftBase + Math.random() * sectionWidth}%`;
-      debris.style.top = `${10 + Math.random() * 70}%`; // 좀 더 넓은 범위
-      
-      // 랜덤 색상 (벽돌 색상 변형)
-      const hue = Math.floor(Math.random() * 30) + 20; // 20-50 (갈색 계열)
-      const saturation = Math.floor(Math.random() * 30) + 20; // 20-50%
-      const lightness = Math.floor(Math.random() * 20) + 40; // 40-60%
-      debris.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-      
-      // 파편 회전 및 낙하 방향 설정 (CSS 변수 활용)
-      const fallX = (Math.random() - 0.5) * 100; // -50px ~ 50px
-      const fallY = 50 + Math.random() * 100; // 50px ~ 150px
-      const rotation = Math.random() * 360; // 0-360도
-      debris.style.setProperty('--fall-x', `${fallX}px`);
-      debris.style.setProperty('--fall-y', `${fallY}px`);
-      debris.style.setProperty('--rotation', `${rotation}deg`);
-      
-      // 랜덤 지연 시간
-      debris.style.animationDelay = `${Math.random() * 0.5}s`;
-      
-      container.appendChild(debris);
-      
-      // 애니메이션 종료 후 요소 제거
-      setTimeout(() => {
-        if (container.contains(debris)) {
-          container.removeChild(debris);
+      // 캐릭터 파라미터가 있으면 해당 캐릭터의 결과 화면 표시
+      if (charParam) {
+        // characters 배열에서 해당 캐릭터 찾기
+        const foundCharacter = characters.find(char => char.name === charParam);
+        
+        if (foundCharacter) {
+          // 결과 처리를 위해 determineCharacter 함수의 로직 일부 활용
+          
+          // 잘 맞는 캐릭터와 안 맞는 캐릭터 찾기 (실제 로직은 간소화)
+          const otherCharacters = characters
+            .filter(char => char.name !== charParam)
+            .map(char => char.name);
+          
+          // 잘 맞는 캐릭터 (간단하게 첫 2개 선택)
+          const compatibleChars = otherCharacters.slice(0, 2);
+          
+          // 안 맞는 캐릭터 (간단하게 마지막 선택)
+          const incompatibleChar = otherCharacters[otherCharacters.length - 1];
+          
+          // 결과 객체 생성
+          const sharedResult: Character = {
+            ...foundCharacter,
+            compatibleCharacters: compatibleChars,
+            incompatibleCharacter: incompatibleChar
+          };
+          
+          // 결과 설정
+          setResult(sharedResult);
         }
-      }, 3000);
-    }
-  }, [currentQuestion]);
-
-  // 벽 무너짐 애니메이션 처리 함수
-  const handleWallTransition = useCallback((newClass: string) => {
-    if (progressClass === newClass) return;
-    
-    document.body.classList.add('progress-transition');
-    
-    // 파편 효과 생성
-    createDebrisEffect();
-    
-    // 새로운 균열 생성
-    if (currentQuestion > 0 && !result) {
-      const newCracks = [...cracksVisible];
-      if (!newCracks.includes(currentQuestion)) {
-        newCracks.push(currentQuestion);
-        setCracksVisible(newCracks);
       }
     }
-    
-    // 애니메이션이 완료된 후 클래스 변경
-    setTimeout(() => {
-      setProgressClass(newClass);
-      document.body.classList.remove('progress-transition');
-    }, 1200); // 애니메이션 지속 시간과 맞춤
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentQuestion, cracksVisible, progressClass, result]);
-
-  // 진행률에 따라 벽 무너짐 효과
-  useEffect(() => {
-    if (result) {
-      handleWallTransition("question-progress-100");
-      return;
-    }
-
-    // 각 질문마다 벽 무너짐 효과 적용
-    handleWallTransition(`question-progress-${currentQuestion}`);
-  }, [currentQuestion, result, handleWallTransition]);
-
-  // body 클래스에 진행률 클래스 추가
-  useEffect(() => {
-    document.body.className = progressClass;
-
-    return () => {
-      document.body.className = "";
-    };
-  }, [progressClass]);
+  }, []);
 
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers, answer];
     setAnswers(newAnswers);
 
     if (currentQuestion < questions.length - 1) {
-      // 답변 후 새로운 균열 효과 추가
-      const newCrack = Math.floor(Math.random() * 5) + 1; // 1-5 사이의 새 균열 번호
-      setCracksVisible(prev => [...prev, newCrack].slice(0, currentQuestion + 2));
-      
+      // 다음 질문으로 이동
       setCurrentQuestion(currentQuestion + 1);
     } else {
       // 마지막 질문에 답변했을 때
-
-      // 먼저 결과를 계산하고 상태 설정 (지연 없이 즉시 계산)
+      // 결과를 계산하고 상태 설정
       const result = determineCharacter(newAnswers);
       setResult(result);
-      
-      // 결과가 설정된 후 무너짐 효과 실행 (애니메이션만 적용, 로직 처리는 영향 없음)
-      setTimeout(() => {
-        createMassiveCollapse();
-      }, 10);
     }
   };
 
-  // 대량의 벽 무너짐 효과 생성 함수
-  const createMassiveCollapse = () => {
-    if (typeof document === 'undefined') return;
-    
-    // 모든 균열을 표시
-    setCracksVisible([1, 2, 3, 4, 5]);
-    
-    // 화면 흔들림 효과
-    document.body.classList.add('massive-collapse');
-    
-    // 대량의 파편 생성
-    const container = document.getElementById('survey-container');
-    if (!container) return;
-    
-    // 화면 여러 위치에 다양한 크기의 파편 생성 (100~150개)
-    const numberOfDebris = 100 + Math.floor(Math.random() * 50);
-    
-    // 파편 생성 함수
-    const createDebrisWithDelay = (index: number, delay: number) => {
-      setTimeout(() => {
-        const debris = document.createElement('div');
-        debris.className = 'wall-debris';
-        
-        // 크기 다양화 (더 큰 파편 포함)
-        const size = Math.floor(Math.random() * 15) + 5; // 5px ~ 20px
-        debris.style.width = `${size}px`;
-        debris.style.height = `${size}px`;
-        
-        // 화면 전체에 랜덤하게 분산
-        debris.style.left = `${Math.random() * 100}%`;
-        debris.style.top = `${Math.random() * 100}%`;
-        
-        // 다양한 색상 (벽돌 색상 변형)
-        const hue = Math.floor(Math.random() * 30) + 20; // 20-50 (갈색 계열)
-        const saturation = Math.floor(Math.random() * 30) + 20; // 20-50%
-        const lightness = Math.floor(Math.random() * 20) + 40; // 40-60%
-        debris.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        
-        // 파편 회전 및 낙하 방향 설정 (CSS 변수 활용)
-        const fallX = (Math.random() - 0.5) * 200; // -100px ~ 100px
-        const fallY = 100 + Math.random() * 300; // 100px ~ 400px
-        const rotation = Math.random() * 720 - 360; // -360도 ~ 360도
-        debris.style.setProperty('--fall-x', `${fallX}px`);
-        debris.style.setProperty('--fall-y', `${fallY}px`);
-        debris.style.setProperty('--rotation', `${rotation}deg`);
-        
-        // 파편 애니메이션 속도 다양화
-        const duration = 1 + Math.random() * 3; // 1s ~ 4s
-        debris.style.animationDuration = `${duration}s`;
-        
-        container.appendChild(debris);
-        
-        // 애니메이션 종료 후 요소 제거
-        setTimeout(() => {
-          if (container.contains(debris)) {
-            container.removeChild(debris);
-          }
-        }, duration * 1000 + 500);
-      }, delay);
-    };
-    
-    // 파편을 시간차를 두고 순차적으로 생성 (0~500ms 사이 랜덤 지연)
-    for (let i = 0; i < numberOfDebris; i++) {
-      const delay = Math.random() * 500;
-      createDebrisWithDelay(i, delay);
-    }
-    
-    // 화면 흔들림 효과 제거
-    setTimeout(() => {
-      document.body.classList.remove('massive-collapse');
-    }, 2000);
-  };
-  
   const determineCharacter = (userAnswers: string[]) => {
     // 답변 패턴에 기반한 간단한 점수 시스템
     const scores: Record<string, number> = {};
@@ -780,56 +639,41 @@ export default function Home() {
   const progressPercentage = (currentQuestion / questions.length) * 100;
 
   return (
-    <div className="titan-card p-6 md:p-8" id="survey-container">
-      {/* 벽 균열 효과 */}
-      {[1, 2, 3, 4, 5].map((crackNum) => (
-        <div 
-          key={crackNum}
-          className={`wall-crack crack-${crackNum} ${
-            cracksVisible.includes(crackNum) || result ? 'visible' : 'hidden'
-          }`}
-          style={{
-            opacity: cracksVisible.includes(crackNum) || result ? 1 : 0,
-            transition: 'opacity 0.8s ease-in'
-          }}
-        ></div>
-      ))}
-      
-      {!result ? (
-        <>
-          <div className="mb-6">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="font-medium">
-                질문 {currentQuestion + 1}/{questions.length}
-              </span>
-              <span className="text-muted">
-                {Math.round(progressPercentage)}%
-              </span>
-            </div>
-            <div className="w-full bg-primary-light rounded-full h-2 overflow-hidden">
-              <div
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-          </div>
+    <main className="min-h-screen flex flex-col items-center p-4 relative">
+   
 
-          <Question
-            question={questions[currentQuestion].text}
-            options={questions[currentQuestion].options}
-            onAnswer={handleAnswer}
-            questionIndex={currentQuestion}
+      <div id="survey-container" className="content-container w-full max-w-3xl mx-auto">
+        {/* 벽 균열 효과 제거, 비디오 배경으로 대체됨 */}
+        
+        {result ? (
+          <Result 
+            character={result.name}
+            description={result.description}
+            compatibleCharacters={result.compatibleCharacters}
+            incompatibleCharacter={result.incompatibleCharacter}
+            onReset={resetSurvey}
           />
-        </>
-      ) : (
-        <Result
-          character={result.name}
-          description={result.description}
-          compatibleCharacters={result.compatibleCharacters}
-          incompatibleCharacter={result.incompatibleCharacter}
-          onReset={resetSurvey}
-        />
-      )}
-    </div>
+        ) : (
+          <>
+            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6">진격의 거인 성격 테스트</h1>
+            <div className="progress-bar mb-8">
+              <div 
+                className="progress-fill"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+            
+            <Question
+              question={questions[currentQuestion].text}
+              options={questions[currentQuestion].options}
+              onAnswer={handleAnswer}
+              questionIndex={currentQuestion}
+              questionNumber={currentQuestion + 1}
+              totalQuestions={questions.length}
+            />
+          </>
+        )}
+      </div>
+    </main>
   );
 }
