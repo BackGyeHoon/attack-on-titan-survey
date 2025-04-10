@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Question } from "../components/survey/Question";
 import { Result } from "../components/survey/Result";
 
@@ -568,12 +568,12 @@ export default function Home() {
     let highestScore = 0;
     let topCharacters: string[] = [];
 
-    Object.entries(scores).forEach(([charName, score]) => {
+    Object.entries(scores).forEach(([name, score]) => {
       if (score > highestScore) {
         highestScore = score;
-        topCharacters = [charName];
+        topCharacters = [name];
       } else if (score === highestScore) {
-        topCharacters.push(charName);
+        topCharacters.push(name);
       }
     });
 
@@ -669,7 +669,6 @@ export default function Home() {
               onAnswer={handleAnswer}
               questionIndex={currentQuestion}
               questionNumber={currentQuestion + 1}
-              totalQuestions={questions.length}
             />
           </>
         )}

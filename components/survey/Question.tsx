@@ -6,7 +6,6 @@ interface QuestionProps {
   onAnswer: (answer: string) => void;
   questionIndex?: number;
   questionNumber?: number;
-  totalQuestions?: number;
 }
 
 // 진격의 거인 명대사 배열
@@ -35,7 +34,6 @@ export function Question({
   onAnswer,
   questionIndex,
   questionNumber,
-  totalQuestions,
 }: QuestionProps) {
   // 클라이언트 사이드에서만 렌더링되도록 상태 설정
   const [quote, setQuote] = useState<string>("");

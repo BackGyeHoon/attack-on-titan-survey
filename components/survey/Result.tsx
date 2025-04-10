@@ -312,7 +312,7 @@ export function Result({
       const randomChar = filteredChars[Math.floor(Math.random() * filteredChars.length)];
       setLocalIncompatible(randomChar);
     }
-  }, [character, image, incompatibleCharacter]);
+  }, [character, image, incompatibleCharacter, characterName]);
   
   // handleShare 함수 수정
   const handleShare = async () => {
@@ -816,13 +816,13 @@ export function Result({
         </div>
 
         <div className="mb-8">
-          <h2 className="titan-header text-xl mb-6">{character}</h2>
+          <h2 className="titan-header text-xl mb-6">{characterName}</h2>
 
           {!imageError && characterImg ? (
             <div className="avatar-container mb-6">
               <Image
                 src={characterImg}
-                alt={character}
+                alt={characterName}
                 width={200}
                 height={200}
                 objectFit="cover"
@@ -832,7 +832,7 @@ export function Result({
             </div>
           ) : (
             <div className="default-avatar mb-6">
-              <div className="avatar-initials">{character.charAt(0)}</div>
+              <div className="avatar-initials">{characterName.charAt(0)}</div>
             </div>
           )}
 
