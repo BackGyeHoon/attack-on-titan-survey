@@ -4,6 +4,26 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "진격의 거인 캐릭터 테스트",
   description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
+  openGraph: {
+    title: "진격의 거인 캐릭터 테스트",
+    description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
+    images: [
+      {
+        url: "/images/og-image.webp",
+        width: 1200,
+        height: 630,
+        alt: "진격의 거인 캐릭터 테스트",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "진격의 거인 캐릭터 테스트",
+    description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
+    images: ["/images/og-image.webp"],
+  },
 };
 
 export default function RootLayout({
