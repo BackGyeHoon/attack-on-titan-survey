@@ -22,6 +22,29 @@
   --shadow-highlight: rgba(255, 255, 255, 0.05);
   --font-title: "Black Han Sans", sans-serif;
   --font-body: "Nanum Gothic", sans-serif;
+  
+  /* 벽 텍스처 관련 변수 */
+  --brick-color-1: #632c1d;
+  --brick-color-2: #773525;
+  --brick-color-3: #8b4232;
+  --brick-color-4: #5e2b1c;
+  --brick-gap: #331a14;
+  --brick-crack: rgba(0, 0, 0, 0.5);
+  --wall-opacity: 1;
+  --brick-layer-1: 1;
+  --brick-layer-2: 1;
+  --brick-layer-3: 1;
+  --brick-layer-4: 1;
+  --brick-size: 80px;
+  
+  /* 무너짐 효과 변수 */
+  --wall-damage-1: 0%;
+  --wall-damage-2: 0%;
+  --wall-damage-3: 0%;
+  --wall-damage-4: 0%;
+  --wall-damage-5: 0%;
+  --sky-visibility: 0%;
+  --sky-color: #4a8be3;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,10 +67,62 @@
 }
 
 body {
+  position: relative;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
   transition: background-color 0.8s ease, color 0.8s ease;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  opacity: var(--wall-opacity);
+  background-color: var(--brick-gap);
+  background-image: 
+    /* 첫 번째 층 벽돌 */
+    linear-gradient(to right, var(--brick-color-1) var(--brick-size), transparent var(--brick-size)),
+    linear-gradient(to bottom, transparent calc(var(--brick-size)/2), var(--brick-gap) calc(var(--brick-size)/2), transparent calc(var(--brick-size)/2 + 2px)),
+    /* 두 번째 층 벽돌 (오프셋) */
+    linear-gradient(to right, var(--brick-color-2) var(--brick-size), transparent var(--brick-size)),
+    /* 세 번째 층 벽돌 */
+    linear-gradient(to right, var(--brick-color-3) var(--brick-size), transparent var(--brick-size)),
+    /* 네 번째 층 벽돌 (오프셋) */
+    linear-gradient(to right, var(--brick-color-4) var(--brick-size), transparent var(--brick-size));
+  background-size: 
+    calc(var(--brick-size) * 2) calc(var(--brick-size)),
+    calc(var(--brick-size) * 2) calc(var(--brick-size)),
+    calc(var(--brick-size) * 2) calc(var(--brick-size)),
+    calc(var(--brick-size) * 2) calc(var(--brick-size));
+  background-position: 
+    0 0,
+    0 0,
+    calc(var(--brick-size)) calc(var(--brick-size)/2),
+    0 calc(var(--brick-size) * 2),
+    calc(var(--brick-size)) calc(var(--brick-size) * 2.5);
+  background-repeat: repeat;
+  transition: background-position 0.6s ease-in-out, opacity 0.8s ease;
+}
+
+/* 무너진 하늘 효과 */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  background: var(--sky-color);
+  opacity: var(--sky-visibility);
+  transition: opacity 1s ease-in-out;
 }
 
 /* 진격의 거인 스타일 컴포넌트 */
@@ -89,42 +164,178 @@ body {
   transform: translateY(0);
 }
 
-/* 배경색 변화 로직 */
+/* 벽 이미지와 배경 변화 로직 */
 .question-progress-0 {
-  --background: var(--background-start);
-  --card-bg: #32211c;
+  --background: rgba(43, 26, 22, 0.85);
+  --card-bg: rgba(50, 33, 28, 0.85);
   --accent: #ff9c6b;
+  --wall-opacity: 1;
+  --wall-damage-1: 0%;
+  --wall-damage-2: 0%;
+  --wall-damage-3: 0%;
+  --wall-damage-4: 0%;
+  --wall-damage-5: 0%;
+  --sky-visibility: 0%;
 }
 
 .question-progress-20 {
-  --background: #352117;
-  --card-bg: #3a2922;
+  --background: rgba(43, 26, 22, 0.8);
+  --card-bg: rgba(50, 33, 28, 0.8);
   --accent: #ffa175;
+  --wall-opacity: 0.95;
+  --wall-damage-1: 5%;
+  --wall-damage-2: 2%;
+  --wall-damage-3: 0%;
+  --wall-damage-4: 0%;
+  --wall-damage-5: 0%;
+  --sky-visibility: 0.05;
 }
 
 .question-progress-40 {
-  --background: #2d334a;
-  --card-bg: #353c57;
+  --background: rgba(45, 51, 74, 0.8);
+  --card-bg: rgba(53, 60, 87, 0.8);
   --accent: #ffab80;
+  --wall-opacity: 0.9;
+  --wall-damage-1: 15%;
+  --wall-damage-2: 10%;
+  --wall-damage-3: 5%;
+  --wall-damage-4: 0%;
+  --wall-damage-5: 0%;
+  --sky-visibility: 0.15;
 }
 
 .question-progress-60 {
-  --background: #274065;
-  --card-bg: #2e4978;
+  --background: rgba(39, 64, 101, 0.75);
+  --card-bg: rgba(46, 73, 120, 0.8);
   --accent: #80b5ff;
+  --wall-opacity: 0.85;
+  --wall-damage-1: 30%;
+  --wall-damage-2: 20%;
+  --wall-damage-3: 15%;
+  --wall-damage-4: 5%;
+  --wall-damage-5: 0%;
+  --sky-visibility: 0.3;
 }
 
 .question-progress-80 {
-  --background: #1e4d80;
-  --card-bg: #245a95;
+  --background: rgba(30, 77, 128, 0.7);
+  --card-bg: rgba(36, 90, 149, 0.8);
   --accent: #6bc1ff;
+  --wall-opacity: 0.75;
+  --wall-damage-1: 50%;
+  --wall-damage-2: 40%;
+  --wall-damage-3: 30%;
+  --wall-damage-4: 20%;
+  --wall-damage-5: 10%;
+  --sky-visibility: 0.5;
 }
 
 .question-progress-100 {
-  --background: var(--background-end);
-  --card-bg: #5698e8;
+  --background: rgba(74, 139, 227, 0.7);
+  --card-bg: rgba(86, 152, 232, 0.8);
   --accent: #ffffff;
   --foreground: #ffffff;
+  --wall-opacity: 0.5;
+  --wall-damage-1: 80%;
+  --wall-damage-2: 70%;
+  --wall-damage-3: 60%;
+  --wall-damage-4: 50%;
+  --wall-damage-5: 40%;
+  --sky-visibility: 0.8;
+}
+
+/* 벽 무너짐 애니메이션 */
+@keyframes wallCrumble {
+  0% {
+    transform: scale(1);
+    filter: blur(0px);
+  }
+  10% {
+    transform: scale(1.01) rotate(0.2deg);
+    filter: blur(0.5px);
+  }
+  25% {
+    transform: scale(0.99) rotate(-0.3deg);
+    filter: blur(1px);
+  }
+  40% {
+    transform: scale(1.015) rotate(0.4deg);
+    filter: blur(0.5px);
+  }
+  55% {
+    transform: scale(0.98) rotate(-0.5deg);
+    filter: blur(1.5px);
+  }
+  70% {
+    transform: scale(1.02) rotate(0.3deg);
+    filter: blur(0.8px);
+  }
+  85% {
+    transform: scale(0.99) rotate(-0.2deg);
+    filter: blur(0.3px);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    filter: blur(0px);
+  }
+}
+
+/* 벽 균열 효과 */
+.wall-crack {
+  position: absolute;
+  background-color: var(--brick-crack);
+  z-index: -1;
+  opacity: 0;
+  transition: width 0.8s ease, height 0.8s ease, opacity 0.8s ease;
+}
+
+.crack-1 {
+  top: 10%;
+  left: 20%;
+  width: calc(5% + var(--wall-damage-1));
+  height: calc(30% + var(--wall-damage-1));
+  transform: rotate(45deg);
+  opacity: calc(var(--wall-damage-1) / 100);
+}
+
+.crack-2 {
+  top: 40%;
+  left: 60%;
+  width: calc(3% + var(--wall-damage-2));
+  height: calc(25% + var(--wall-damage-2));
+  transform: rotate(-30deg);
+  opacity: calc(var(--wall-damage-2) / 100);
+}
+
+.crack-3 {
+  top: 70%;
+  left: 35%;
+  width: calc(2% + var(--wall-damage-3));
+  height: calc(20% + var(--wall-damage-3));
+  transform: rotate(15deg);
+  opacity: calc(var(--wall-damage-3) / 100);
+}
+
+.crack-4 {
+  top: 25%;
+  left: 75%;
+  width: calc(4% + var(--wall-damage-4));
+  height: calc(35% + var(--wall-damage-4));
+  transform: rotate(-60deg);
+  opacity: calc(var(--wall-damage-4) / 100);
+}
+
+.crack-5 {
+  top: 55%;
+  left: 10%;
+  width: calc(3% + var(--wall-damage-5));
+  height: calc(30% + var(--wall-damage-5));
+  transform: rotate(20deg);
+  opacity: calc(var(--wall-damage-5) / 100);
+}
+
+body.progress-transition::before {
+  animation: wallCrumble 1.2s ease-in-out;
 }
 
 /* 내용 컨테이너 */
@@ -132,6 +343,8 @@ body {
   max-width: 960px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* 아바타 컨테이너 */
@@ -182,4 +395,28 @@ body {
 
 .stat-bar-compassion {
   background: linear-gradient(90deg, #ffb347, #ffcc33);
+}
+
+/* 벽 파편 효과 */
+.wall-debris {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #8b7b65;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  animation: fallDebris 2s ease-in forwards;
+}
+
+@keyframes fallDebris {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
 }

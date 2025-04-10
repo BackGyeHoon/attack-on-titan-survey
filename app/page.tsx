@@ -8,60 +8,109 @@ import { Result } from "../components/survey/Result";
 const questions = [
   {
     id: 1,
-    text: "위기 상황에서 당신은 어떻게 행동하나요?",
+    text: "친구가 갑자기 갈등 상황에 처했다고 연락이 왔을 때, 당신의 첫 반응은?",
     options: [
-      "냉정하게 상황을 분석하고 대처한다",
-      "본능적으로 행동한다",
-      "팀원들을 보호하려고 한다",
-      "최선의 전략을 찾아 실행한다",
+      "상황을 자세히 물어보고 실질적인 해결책을 함께 찾는다",
+      "즉시 달려가서 친구 편에서 직접 상황에 개입한다",
+      "어떤 판단도 하지 않고 친구의 감정을 이해하고 공감한다",
+      "객관적인 시각으로 상황을 분석하고 논리적인 조언을 한다",
     ],
   },
   {
     id: 2,
-    text: "당신의 가장 큰 강점은 무엇인가요?",
+    text: "학교나 직장에서 팀 프로젝트를 할 때 당신의 역할은?",
     options: [
-      "분석력과 전략적 사고",
-      "강한 의지와 결단력",
-      "충성심과 헌신",
-      "적응력과 생존 능력",
+      "새로운 아이디어를 제시하고 방향성을 설계하는 기획자",
+      "목표를 설정하고 팀을 이끄는 결단력 있는 리더",
+      "갈등을 중재하고 모두의 의견을 조율하는 중재자",
+      "주어진 일을 묵묵히 완수하고 실무를 담당하는 실행자",
     ],
   },
   {
     id: 3,
-    text: "당신에게 가장 중요한 가치는 무엇인가요?",
-    options: ["자유", "정의", "가족과 친구", "인류의 생존"],
+    text: "주말에 가장 하고 싶은 활동은?",
+    options: [
+      "아무도 가보지 않은 곳을 탐험하거나 스릴 넘치는 활동을 즐긴다",
+      "사회를 위한 봉사활동이나 의미 있는 프로젝트에 참여한다",
+      "가족이나 친한 친구들과 함께 대화하며 시간을 보낸다",
+      "책읽기, 그림그리기 등 혼자서 조용히 취미활동을 즐긴다",
+    ],
   },
   {
     id: 4,
-    text: "다른 사람들이 당신을 어떻게 묘사하나요?",
+    text: "사람들이 당신을 처음 만났을 때 어떤 인상을 받는다고 생각하나요?",
     options: [
-      "리더십이 있고 카리스마가 있다",
-      "신뢰할 수 있고 충성스럽다",
-      "똑똑하고 분석적이다",
-      "용감하고 결단력이 있다",
-      "계산적이고 전략적이다",
+      "누구나 따르고 싶은 리더십이 있는 카리스마 있는 사람",
+      "신뢰할 수 있고 약속을 지키는 정직한 사람",
+      "박학다식하고 깊은 생각을 가진 지적인 사람",
+      "긍정적이고 활기찬 에너지가 넘치는 활발한 사람",
+      "침착하고 계산적이며 상황을 냉정하게 보는 사람",
     ],
   },
   {
     id: 5,
-    text: "어려운 결정을 내릴 때, 당신은 주로 무엇에 의존하나요?",
+    text: "중요한 선택의 기로에 섰을 때, 당신은 주로 어떻게 결정하나요?",
     options: [
-      "논리와 이성",
-      "본능과 직감",
-      "다른 사람들의 의견",
-      "과거의 경험",
-      "목표와 이상",
+      "모든 선택지의 장단점을 종이에 적어보고 분석한다",
+      "마음이 끌리는 방향과 직감을 가장 중요하게 생각한다",
+      "신뢰하는 주변 사람들에게 의견을 구하고 참고한다",
+      "과거에 비슷한 상황에서 어떤 결과가 있었는지 참고한다",
+      "궁극적인 목표 달성에 어떤 선택이 더 유리한지 고려한다",
     ],
   },
   {
     id: 6,
-    text: "당신이 가장 두려워하는 것은 무엇인가요?",
+    text: "인생에서 가장 두려운 상황은 무엇인가요?",
     options: [
-      "사랑하는 사람을 잃는 것",
-      "자유를 잃는 것",
-      "실패하는 것",
-      "무력함을 느끼는 것",
-      "배신당하는 것",
+      "내가 사랑하는 사람이 내 곁을 떠나는 것",
+      "자신의 삶에 대한 통제권을 잃고 선택의 자유를 빼앗기는 것",
+      "오랫동안 준비하고 노력한 일에서 실패하는 것",
+      "급격한 변화에 적응하지 못하고 뒤처지는 것",
+      "가장 신뢰했던 사람에게 배신당하는 것",
+    ],
+  },
+  {
+    id: 7,
+    text: "스트레스를 받을 때 당신은 어떻게 대처하나요?",
+    options: [
+      "문제의 원인을 분석하고 해결책을 찾아 실행한다",
+      "격렬한 운동이나 활동으로 에너지를 발산한다",
+      "친한 사람들과 대화하며 감정을 나눈다",
+      "혼자만의 시간을 갖고 내면을 들여다본다",
+      "일상에서 벗어나 새로운 경험을 통해 기분 전환한다",
+    ],
+  },
+  {
+    id: 8,
+    text: "당신이 생각하는 이상적인 리더의 모습은?",
+    options: [
+      "명확한 비전을 제시하고 대담한 결정을 내리는 카리스마적 리더",
+      "구성원들의 성장을 돕고 팀워크를 중시하는 섬김의 리더",
+      "논리적 분석과 전략적 사고로 최적의 방향을 찾는 지적인 리더",
+      "솔선수범하며 원칙과, 책임감, 정의를 중시하는 모범적 리더",
+      "변화와 혁신을 두려워하지 않고 새로운 길을 개척하는 도전적 리더",
+    ],
+  },
+  {
+    id: 9,
+    text: "당신에게 가장 중요한 가치는 무엇인가요?",
+    options: [
+      "자유와 독립성",
+      "가족과 사랑하는 사람들과의 관계",
+      "정의와 진실",
+      "성취와 성공",
+      "안정과 평화",
+    ],
+  },
+  {
+    id: 10,
+    text: "미지의 상황이나 새로운 도전에 직면했을 때, 당신의 태도는?",
+    options: [
+      "새로운 가능성에 흥분하며 적극적으로 도전한다",
+      "위험과 이득을 철저히 분석한 후 행동한다",
+      "경험 많은 사람들의 조언을 구하고 신중하게 접근한다",
+      "자신의 직관과 능력을 믿고 상황에 맞게 유연하게 대응한다",
+      "기존의 경험과 지식을 바탕으로 체계적으로 접근한다",
     ],
   },
 ];
@@ -200,27 +249,101 @@ export default function Home() {
     incompatibleCharacter?: string;
   } | null>(null);
   const [progressClass, setProgressClass] = useState("question-progress-0");
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [cracksVisible, setCracksVisible] = useState<number[]>([]);
 
-  // 진행률에 따라 배경색 변경
+  // 진행률에 따라 벽 무너짐 효과
   useEffect(() => {
     if (result) {
-      setProgressClass("question-progress-100");
+      handleWallTransition("question-progress-100");
       return;
     }
 
-    const progress = Math.round((currentQuestion / questions.length) * 100);
-    if (progress <= 20) {
-      setProgressClass("question-progress-0");
-    } else if (progress <= 40) {
-      setProgressClass("question-progress-20");
-    } else if (progress <= 60) {
-      setProgressClass("question-progress-40");
-    } else if (progress <= 80) {
-      setProgressClass("question-progress-60");
-    } else {
-      setProgressClass("question-progress-80");
-    }
+    // 각 질문마다 벽 무너짐 효과 적용
+    handleWallTransition(`question-progress-${currentQuestion}`);
   }, [currentQuestion, result]);
+
+  // 벽 무너짐 애니메이션 처리 함수
+  const handleWallTransition = (newClass: string) => {
+    if (progressClass === newClass) return;
+    
+    setIsTransitioning(true);
+    document.body.classList.add('progress-transition');
+    
+    // 파편 효과 생성
+    createDebrisEffect();
+    
+    // 새로운 균열 생성
+    if (currentQuestion > 0 && !result) {
+      const newCracks = [...cracksVisible];
+      if (!newCracks.includes(currentQuestion)) {
+        newCracks.push(currentQuestion);
+        setCracksVisible(newCracks);
+      }
+    }
+    
+    // 애니메이션이 완료된 후 클래스 변경
+    setTimeout(() => {
+      setProgressClass(newClass);
+      document.body.classList.remove('progress-transition');
+      setIsTransitioning(false);
+    }, 1200); // 애니메이션 지속 시간과 맞춤
+  };
+
+  // 파편 효과 생성 함수
+  const createDebrisEffect = () => {
+    if (typeof document === 'undefined') return;
+    
+    const container = document.getElementById('survey-container');
+    if (!container) return;
+    
+    // 각 질문마다 다른 수의 파편 생성 (진행도에 따라 더 많이 생성)
+    const baseDebris = 3 + Math.floor((currentQuestion / questions.length) * 10); // 3~13개
+    const numberOfDebris = baseDebris + Math.floor(Math.random() * 5); // 약간의 랜덤성 추가
+    
+    for (let i = 0; i < numberOfDebris; i++) {
+      const debris = document.createElement('div');
+      debris.className = 'wall-debris';
+      
+      // 랜덤 위치와 크기 (화면 전체에 분산)
+      const size = Math.floor(Math.random() * 8) + 4; // 4px ~ 12px
+      debris.style.width = `${size}px`;
+      debris.style.height = `${size}px`;
+      
+      // 더 넓은 범위에 파편 분산
+      const section = currentQuestion % 4; // 화면을 4개 구역으로 나눔
+      const sectionWidth = 100 / 4;
+      const leftBase = section * sectionWidth;
+      debris.style.left = `${leftBase + Math.random() * sectionWidth}%`;
+      debris.style.top = `${10 + Math.random() * 70}%`; // 좀 더 넓은 범위
+      
+      // 랜덤 색상 (벽돌 색상 변형)
+      const hue = Math.floor(Math.random() * 30) + 20; // 20-50 (갈색 계열)
+      const saturation = Math.floor(Math.random() * 30) + 20; // 20-50%
+      const lightness = Math.floor(Math.random() * 20) + 40; // 40-60%
+      debris.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+      
+      // 파편 회전 및 낙하 방향 설정 (CSS 변수 활용)
+      const fallX = (Math.random() - 0.5) * 100; // -50px ~ 50px
+      const fallY = 50 + Math.random() * 100; // 50px ~ 150px
+      const rotation = Math.random() * 360; // 0-360도
+      debris.style.setProperty('--fall-x', `${fallX}px`);
+      debris.style.setProperty('--fall-y', `${fallY}px`);
+      debris.style.setProperty('--rotation', `${rotation}deg`);
+      
+      // 랜덤 지연 시간
+      debris.style.animationDelay = `${Math.random() * 0.5}s`;
+      
+      container.appendChild(debris);
+      
+      // 애니메이션 종료 후 요소 제거
+      setTimeout(() => {
+        if (container.contains(debris)) {
+          container.removeChild(debris);
+        }
+      }, 3000);
+    }
+  };
 
   // body 클래스에 진행률 클래스 추가
   useEffect(() => {
@@ -236,188 +359,418 @@ export default function Home() {
     setAnswers(newAnswers);
 
     if (currentQuestion < questions.length - 1) {
+      // 답변 후 새로운 균열 효과 추가
+      const newCrack = Math.floor(Math.random() * 5) + 1; // 1-5 사이의 새 균열 번호
+      setCracksVisible(prev => [...prev, newCrack].slice(0, currentQuestion + 2));
+      
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // 답변을 기반으로 캐릭터 결정
-      const determineCharacter = (userAnswers: string[]) => {
-        // 답변 패턴에 기반한 간단한 점수 시스템
-        let scores: Record<string, number> = {};
+      // 마지막 질문에 답변했을 때
 
-        // 초기화
-        characters.forEach((char) => {
-          scores[char.name] = 0;
-        });
-
-        // 각 질문별 응답에 따른 점수 할당
-        // 질문 1: 위기 상황 대처 방식
-        if (userAnswers[0] === "냉정하게 상황을 분석하고 대처한다") {
-          scores["아르민 알레르트"] += 2;
-          scores["엘빈 스미스"] += 2;
-          scores["한지 조에"] += 1;
-          scores["리바이 아커만"] += 1;
-        } else if (userAnswers[0] === "본능적으로 행동한다") {
-          scores["에렌 예거"] += 2;
-          scores["미카사 아커만"] += 1;
-          scores["사샤 블라우스"] += 2;
-        } else if (userAnswers[0] === "팀원들을 보호하려고 한다") {
-          scores["미카사 아커만"] += 2;
-          scores["라이너 브라운"] += 1;
-          scores["히스토리아 레이스"] += 1;
-        } else if (userAnswers[0] === "최선의 전략을 찾아 실행한다") {
-          scores["아르민 알레르트"] += 1;
-          scores["엘빈 스미스"] += 2;
-          scores["지크 예거"] += 2;
-        }
-
-        // 질문 2: 가장 큰 강점
-        if (userAnswers[1] === "분석력과 전략적 사고") {
-          scores["아르민 알레르트"] += 2;
-          scores["엘빈 스미스"] += 2;
-          scores["한지 조에"] += 1;
-          scores["지크 예거"] += 1;
-        } else if (userAnswers[1] === "강한 의지와 결단력") {
-          scores["에렌 예거"] += 2;
-          scores["리바이 아커만"] += 2;
-          scores["미카사 아커만"] += 1;
-          scores["프록 폴스타"] += 2;
-        } else if (userAnswers[1] === "충성심과 헌신") {
-          scores["미카사 아커만"] += 2;
-          scores["라이너 브라운"] += 2;
-          scores["베르톨트 후버"] += 1;
-          scores["팔코 그라이스"] += 1;
-        } else if (userAnswers[1] === "적응력과 생존 능력") {
-          scores["에렌 예거"] += 1;
-          scores["유미르"] += 2;
-          scores["피크 핑거"] += 1;
-          scores["사샤 블라우스"] += 1;
-        }
-
-        // 질문 3: 가장 중요한 가치
-        if (userAnswers[2] === "자유") {
-          scores["에렌 예거"] += 3;
-          scores["유미르"] += 1;
-        } else if (userAnswers[2] === "정의") {
-          scores["엘빈 스미스"] += 2;
-          scores["리바이 아커만"] += 1;
-        } else if (userAnswers[2] === "가족과 친구") {
-          scores["미카사 아커만"] += 2;
-          scores["코니 스프링거"] += 2;
-          scores["사샤 블라우스"] += 2;
-          scores["카를라 예거"] += 3;
-        } else if (userAnswers[2] === "인류의 생존") {
-          scores["엘빈 스미스"] += 3;
-          scores["한지 조에"] += 2;
-          scores["도트 픽시스"] += 2;
-        }
-
-        // 질문 4: 다른 사람들의 묘사
-        if (userAnswers[3] === "리더십이 있고 카리스마가 있다") {
-          scores["엘빈 스미스"] += 3;
-          scores["에렌 예거"] += 1;
-        } else if (userAnswers[3] === "신뢰할 수 있고 충성스럽다") {
-          scores["미카사 아커만"] += 2;
-          scores["라이너 브라운"] += 1;
-          scores["팔코 그라이스"] += 2;
-        } else if (userAnswers[3] === "똑똑하고 분석적이다") {
-          scores["아르민 알레르트"] += 3;
-          scores["한지 조에"] += 2;
-          scores["피크 핑거"] += 2;
-        } else if (userAnswers[3] === "용감하고 결단력이 있다") {
-          scores["에렌 예거"] += 2;
-          scores["리바이 아커만"] += 2;
-          scores["가비 브라운"] += 1;
-        } else if (userAnswers[3] === "계산적이고 전략적이다") {
-          scores["지크 예거"] += 3;
-          scores["애니 레온하트"] += 2;
-        }
-
-        // 질문 5: 결정 방식
-        if (userAnswers[4] === "논리와 이성") {
-          scores["아르민 알레르트"] += 2;
-          scores["한지 조에"] += 1;
-          scores["지크 예거"] += 2;
-        } else if (userAnswers[4] === "본능과 직감") {
-          scores["에렌 예거"] += 2;
-          scores["미카사 아커만"] += 2;
-          scores["사샤 블라우스"] += 2;
-        } else if (userAnswers[4] === "다른 사람들의 의견") {
-          scores["히스토리아 레이스"] += 2;
-          scores["팔코 그라이스"] += 2;
-        } else if (userAnswers[4] === "과거의 경험") {
-          scores["리바이 아커만"] += 2;
-          scores["케니 아커만"] += 2;
-          scores["그리샤 예거"] += 1;
-        } else if (userAnswers[4] === "목표와 이상") {
-          scores["엘빈 스미스"] += 3;
-          scores["프록 폴스타"] += 2;
-        }
-
-        // 질문 6: 가장 두려워하는 것
-        if (userAnswers[5] === "사랑하는 사람을 잃는 것") {
-          scores["미카사 아커만"] += 3;
-          scores["카를라 예거"] += 2;
-          scores["베르톨트 후버"] += 1;
-        } else if (userAnswers[5] === "자유를 잃는 것") {
-          scores["에렌 예거"] += 3;
-          scores["유미르"] += 2;
-        } else if (userAnswers[5] === "실패하는 것") {
-          scores["라이너 브라운"] += 2;
-          scores["엘빈 스미스"] += 2;
-          scores["가비 브라운"] += 2;
-        } else if (userAnswers[5] === "무력함을 느끼는 것") {
-          scores["에렌 예거"] += 2;
-          scores["리바이 아커만"] += 2;
-        } else if (userAnswers[5] === "배신당하는 것") {
-          scores["애니 레온하트"] += 2;
-          scores["히스토리아 레이스"] += 1;
-          scores["포르코 갤리아드"] += 2;
-        }
-
-        // 가장 높은 점수를 받은 캐릭터 찾기
-        let highestScore = 0;
-        let topCharacters: string[] = [];
-
-        Object.entries(scores).forEach(([charName, score]) => {
-          if (score > highestScore) {
-            highestScore = score;
-            topCharacters = [charName];
-          } else if (score === highestScore) {
-            topCharacters.push(charName);
-          }
-        });
-
-        // 동점일 경우 그 중 하나를 선택
-        const selectedCharName =
-          topCharacters[Math.floor(Math.random() * topCharacters.length)];
-
-        // 잘 맞는 캐릭터 선정 (메인 캐릭터 제외하고 상위 2개)
-        let compatibleCharacters: string[] = [];
-
-        const sortedScores = Object.entries(scores)
-          .filter(([name]) => name !== selectedCharName)
-          .sort((a, b) => b[1] - a[1]);
-
-        // 상위 2개 캐릭터 선택
-        compatibleCharacters = sortedScores.slice(0, 2).map(([name]) => name);
-
-        // 잘 안맞는 캐릭터 (최하위 1개)
-        const incompatibleCharacter = sortedScores[sortedScores.length - 1][0];
-
-        // 해당 이름의 캐릭터 객체 반환 (잘 맞는/안 맞는 캐릭터 정보 포함)
-        const mainCharacter =
-          characters.find((char) => char.name === selectedCharName) ||
-          characters[0];
-
-        return {
-          ...mainCharacter,
-          compatibleCharacters,
-          incompatibleCharacter,
-        };
-      };
-
+      // 먼저 결과를 계산하고 상태 설정 (지연 없이 즉시 계산)
       const result = determineCharacter(newAnswers);
       setResult(result);
+      
+      // 결과가 설정된 후 무너짐 효과 실행 (애니메이션만 적용, 로직 처리는 영향 없음)
+      setTimeout(() => {
+        createMassiveCollapse();
+      }, 10);
     }
+  };
+
+  // 대량의 벽 무너짐 효과 생성 함수
+  const createMassiveCollapse = () => {
+    if (typeof document === 'undefined') return;
+    
+    // 모든 균열을 표시
+    setCracksVisible([1, 2, 3, 4, 5]);
+    
+    // 화면 흔들림 효과
+    document.body.classList.add('massive-collapse');
+    
+    // 대량의 파편 생성
+    const container = document.getElementById('survey-container');
+    if (!container) return;
+    
+    // 화면 여러 위치에 다양한 크기의 파편 생성 (100~150개)
+    const numberOfDebris = 100 + Math.floor(Math.random() * 50);
+    
+    // 파편 생성 함수
+    const createDebrisWithDelay = (index: number, delay: number) => {
+      setTimeout(() => {
+        const debris = document.createElement('div');
+        debris.className = 'wall-debris';
+        
+        // 크기 다양화 (더 큰 파편 포함)
+        const size = Math.floor(Math.random() * 15) + 5; // 5px ~ 20px
+        debris.style.width = `${size}px`;
+        debris.style.height = `${size}px`;
+        
+        // 화면 전체에 랜덤하게 분산
+        debris.style.left = `${Math.random() * 100}%`;
+        debris.style.top = `${Math.random() * 100}%`;
+        
+        // 다양한 색상 (벽돌 색상 변형)
+        const hue = Math.floor(Math.random() * 30) + 20; // 20-50 (갈색 계열)
+        const saturation = Math.floor(Math.random() * 30) + 20; // 20-50%
+        const lightness = Math.floor(Math.random() * 20) + 40; // 40-60%
+        debris.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        
+        // 파편 회전 및 낙하 방향 설정 (CSS 변수 활용)
+        const fallX = (Math.random() - 0.5) * 200; // -100px ~ 100px
+        const fallY = 100 + Math.random() * 300; // 100px ~ 400px
+        const rotation = Math.random() * 720 - 360; // -360도 ~ 360도
+        debris.style.setProperty('--fall-x', `${fallX}px`);
+        debris.style.setProperty('--fall-y', `${fallY}px`);
+        debris.style.setProperty('--rotation', `${rotation}deg`);
+        
+        // 파편 애니메이션 속도 다양화
+        const duration = 1 + Math.random() * 3; // 1s ~ 4s
+        debris.style.animationDuration = `${duration}s`;
+        
+        container.appendChild(debris);
+        
+        // 애니메이션 종료 후 요소 제거
+        setTimeout(() => {
+          if (container.contains(debris)) {
+            container.removeChild(debris);
+          }
+        }, duration * 1000 + 500);
+      }, delay);
+    };
+    
+    // 파편을 시간차를 두고 순차적으로 생성 (0~500ms 사이 랜덤 지연)
+    for (let i = 0; i < numberOfDebris; i++) {
+      const delay = Math.random() * 500;
+      createDebrisWithDelay(i, delay);
+    }
+    
+    // 화면 흔들림 효과 제거
+    setTimeout(() => {
+      document.body.classList.remove('massive-collapse');
+    }, 2000);
+  };
+  
+  const determineCharacter = (userAnswers: string[]) => {
+    // 답변 패턴에 기반한 간단한 점수 시스템
+    let scores: Record<string, number> = {};
+
+    // 초기화
+    characters.forEach((char) => {
+      scores[char.name] = 0;
+    });
+
+    // 각 질문별 응답에 따른 점수 할당
+    // 질문 1: 갈등 상황에 대한 반응
+    if (userAnswers[0] === "상황을 자세히 물어보고 실질적인 해결책을 함께 찾는다") {
+      scores["아르민 알레르트"] += 2;
+      scores["엘빈 스미스"] += 1;
+      scores["한지 조에"] += 1;
+      scores["장 키르슈타인"] += 1;
+    } else if (userAnswers[0] === "즉시 달려가서 친구 편에서 직접 상황에 개입한다") {
+      scores["에렌 예거"] += 2;
+      scores["미카사 아커만"] += 2;
+      scores["가비 브라운"] += 1;
+    } else if (userAnswers[0] === "어떤 판단도 하지 않고 친구의 감정을 이해하고 공감한다") {
+      scores["미카사 아커만"] += 1;
+      scores["히스토리아 레이스"] += 2;
+      scores["팔코 그라이스"] += 2;
+      scores["사샤 블라우스"] += 1;
+    } else if (userAnswers[0] === "객관적인 시각으로 상황을 분석하고 논리적인 조언을 한다") {
+      scores["아르민 알레르트"] += 1;
+      scores["지크 예거"] += 3;
+      scores["피크 핑거"] += 1;
+      scores["도트 픽시스"] += 1;
+    }
+
+    // 질문 2: 팀 프로젝트 역할
+    if (userAnswers[1] === "새로운 아이디어를 제시하고 방향성을 설계하는 기획자") {
+      scores["아르민 알레르트"] += 3;
+      scores["한지 조에"] += 2;
+      scores["지크 예거"] += 1;
+    } else if (userAnswers[1] === "목표를 설정하고 팀을 이끄는 결단력 있는 리더") {
+      scores["에렌 예거"] += 2;
+      scores["엘빈 스미스"] += 3;
+      scores["리바이 아커만"] += 2;
+      scores["프록 폴스타"] += 1;
+    } else if (userAnswers[1] === "갈등을 중재하고 모두의 의견을 조율하는 중재자") {
+      scores["히스토리아 레이스"] += 2;
+      scores["마르코 보트"] += 3;
+      scores["팔코 그라이스"] += 2;
+      scores["도트 픽시스"] += 1;
+    } else if (userAnswers[1] === "주어진 일을 묵묵히 완수하고 실무를 담당하는 실행자") {
+      scores["미카사 아커만"] += 2;
+      scores["베르톨트 후버"] += 2;
+      scores["피크 핑거"] += 3;
+      scores["유미르"] += 1;
+    }
+
+    // 질문 3: 주말 활동
+    if (userAnswers[2] === "아무도 가보지 않은 곳을 탐험하거나 스릴 넘치는 활동을 즐긴다") {
+      scores["에렌 예거"] += 3;
+      scores["한지 조에"] += 2;
+      scores["코니 스프링거"] += 1;
+    } else if (userAnswers[2] === "사회를 위한 봉사활동이나 의미 있는 프로젝트에 참여한다") {
+      scores["엘빈 스미스"] += 2;
+      scores["히스토리아 레이스"] += 2;
+      scores["그리샤 예거"] += 2;
+    } else if (userAnswers[2] === "가족이나 친한 친구들과 함께 대화하며 시간을 보낸다") {
+      scores["미카사 아커만"] += 2;
+      scores["코니 스프링거"] += 2;
+      scores["사샤 블라우스"] += 3;
+      scores["카를라 예거"] += 3;
+    } else if (userAnswers[2] === "책읽기, 그림그리기 등 혼자서 조용히 취미활동을 즐긴다") {
+      scores["아르민 알레르트"] += 2;
+      scores["애니 레온하트"] += 3;
+      scores["리바이 아커만"] += 1;
+    }
+
+    // 질문 4: 첫인상
+    if (userAnswers[3] === "누구나 따르고 싶은 리더십이 있는 카리스마 있는 사람") {
+      scores["엘빈 스미스"] += 3;
+      scores["리바이 아커만"] += 2;
+      scores["프록 폴스타"] += 1;
+    } else if (userAnswers[3] === "신뢰할 수 있고 약속을 지키는 정직한 사람") {
+      scores["미카사 아커만"] += 2;
+      scores["팔코 그라이스"] += 2;
+      scores["마르코 보트"] += 3;
+    } else if (userAnswers[3] === "박학다식하고 깊은 생각을 가진 지적인 사람") {
+      scores["아르민 알레르트"] += 3;
+      scores["한지 조에"] += 2;
+      scores["도트 픽시스"] += 1;
+    } else if (userAnswers[3] === "긍정적이고 활기찬 에너지가 넘치는 활발한 사람") {
+      scores["에렌 예거"] += 2;
+      scores["사샤 블라우스"] += 3;
+      scores["코니 스프링거"] += 2;
+      scores["가비 브라운"] += 1;
+    } else if (userAnswers[3] === "침착하고 계산적이며 상황을 냉정하게 보는 사람") {
+      scores["지크 예거"] += 3;
+      scores["애니 레온하트"] += 2;
+      scores["피크 핑거"] += 2;
+    }
+
+    // 질문 5: 결정 방식
+    if (userAnswers[4] === "모든 선택지의 장단점을 종이에 적어보고 분석한다") {
+      scores["아르민 알레르트"] += 3;
+      scores["지크 예거"] += 2;
+      scores["피크 핑거"] += 2;
+    } else if (userAnswers[4] === "마음이 끌리는 방향과 직감을 가장 중요하게 생각한다") {
+      scores["에렌 예거"] += 3;
+      scores["사샤 블라우스"] += 2;
+      scores["유미르"] += 1;
+    } else if (userAnswers[4] === "신뢰하는 주변 사람들에게 의견을 구하고 참고한다") {
+      scores["히스토리아 레이스"] += 3;
+      scores["팔코 그라이스"] += 2;
+      scores["베르톨트 후버"] += 1;
+    } else if (userAnswers[4] === "과거에 비슷한 상황에서 어떤 결과가 있었는지 참고한다") {
+      scores["리바이 아커만"] += 2;
+      scores["케니 아커만"] += 3;
+      scores["도트 픽시스"] += 2;
+    } else if (userAnswers[4] === "궁극적인 목표 달성에 어떤 선택이 더 유리한지 고려한다") {
+      scores["엘빈 스미스"] += 3;
+      scores["지크 예거"] += 2;
+      scores["그리샤 예거"] += 1;
+    }
+
+    // 질문 6: 두려운 상황
+    if (userAnswers[5] === "내가 사랑하는 사람이 내 곁을 떠나는 것") {
+      scores["미카사 아커만"] += 3;
+      scores["카를라 예거"] += 2;
+      scores["히스토리아 레이스"] += 1;
+    } else if (userAnswers[5] === "자신의 삶에 대한 통제권을 잃고 선택의 자유를 빼앗기는 것") {
+      scores["에렌 예거"] += 3;
+      scores["유미르"] += 2;
+      scores["리바이 아커만"] += 1;
+    } else if (userAnswers[5] === "오랫동안 준비하고 노력한 일에서 실패하는 것") {
+      scores["엘빈 스미스"] += 2;
+      scores["라이너 브라운"] += 3;
+      scores["가비 브라운"] += 2;
+    } else if (userAnswers[5] === "급격한 변화에 적응하지 못하고 뒤처지는 것") {
+      scores["아르민 알레르트"] += 2;
+      scores["베르톨트 후버"] += 2;
+      scores["도트 픽시스"] += 2;
+    } else if (userAnswers[5] === "가장 신뢰했던 사람에게 배신당하는 것") {
+      scores["애니 레온하트"] += 3;
+      scores["포르코 갤리아드"] += 2;
+      scores["장 키르슈타인"] += 2;
+    }
+    
+    // 질문 7: 스트레스 대처 방식
+    if (userAnswers[6] === "문제의 원인을 분석하고 해결책을 찾아 실행한다") {
+      scores["아르민 알레르트"] += 3;
+      scores["엘빈 스미스"] += 2;
+      scores["피크 핑거"] += 2;
+      scores["한지 조에"] += 1;
+    } else if (userAnswers[6] === "격렬한 운동이나 활동으로 에너지를 발산한다") {
+      scores["에렌 예거"] += 2;
+      scores["미카사 아커만"] += 2;
+      scores["리바이 아커만"] += 3;
+      scores["가비 브라운"] += 1;
+    } else if (userAnswers[6] === "친한 사람들과 대화하며 감정을 나눈다") {
+      scores["코니 스프링거"] += 3;
+      scores["사샤 블라우스"] += 2;
+      scores["히스토리아 레이스"] += 2;
+      scores["팔코 그라이스"] += 1;
+    } else if (userAnswers[6] === "혼자만의 시간을 갖고 내면을 들여다본다") {
+      scores["애니 레온하트"] += 3;
+      scores["지크 예거"] += 2;
+      scores["베르톨트 후버"] += 2;
+      scores["유미르"] += 1;
+    } else if (userAnswers[6] === "일상에서 벗어나 새로운 경험을 통해 기분 전환한다") {
+      scores["한지 조에"] += 3;
+      scores["코니 스프링거"] += 2;
+      scores["사샤 블라우스"] += 2;
+      scores["장 키르슈타인"] += 1;
+    }
+    
+    // 질문 8:, 이상적인 리더상
+    if (userAnswers[7] === "명확한 비전을 제시하고 대담한 결정을 내리는 카리스마적 리더") {
+      scores["에렌 예거"] += 2;
+      scores["엘빈 스미스"] += 3;
+      scores["프록 폴스타"] += 2;
+      scores["지크 예거"] += 1;
+    } else if (userAnswers[7] === "구성원들의 성장을 돕고 팀워크를 중시하는 섬김의 리더") {
+      scores["히스토리아 레이스"] += 3;
+      scores["마르코 보트"] += 2;
+      scores["팔코 그라이스"] += 2;
+      scores["그리샤 예거"] += 1;
+    } else if (userAnswers[7] === "논리적 분석과 전략적 사고로 최적의 방향을 찾는 지적인 리더") {
+      scores["아르민 알레르트"] += 3;
+      scores["지크 예거"] += 2;
+      scores["한지 조에"] += 2;
+      scores["피크 핑거"] += 1;
+    } else if (userAnswers[7] === "솔선수범하며, 원칙과 책임감, 정의를 중시하는 모범적 리더") {
+      scores["리바이 아커만"] += 3;
+      scores["미카사 아커만"] += 2;
+      scores["도트 픽시스"] += 2;
+      scores["엘빈 스미스"] += 1;
+    } else if (userAnswers[7] === "변화와 혁신을 두려워하지 않고 새로운 길을 개척하는 도전적 리더") {
+      scores["에렌 예거"] += 3;
+      scores["한지 조에"] += 2;
+      scores ["가비 브라운"] += 2;
+      scores["엘빈 스미스"] += 1;
+    }
+    
+    // 질문 9: 중요한 가치
+    if (userAnswers[8] === "자유와 독립성") {
+      scores["에렌 예거"] += 3;
+      scores["유미르"] += 3;
+      scores["케니 아커만"] += 2;
+      scores["한지 조에"] += 1;
+    } else if (userAnswers[8] === "가족과 사랑하는 사람들과의 관계") {
+      scores["미카사 아커만"] += 3;
+      scores["카를라 예거"] += 3;
+      scores["팔코 그라이스"] += 2;
+      scores["히스토리아 레이스"] += 1;
+    } else if (userAnswers[8] === "정의와 진실") {
+      scores["엘빈 스미스"] += 3;
+      scores["리바이 아커만"] += 2;
+      scores["아르민 알레르트"] += 2;
+      scores["에렌 예거"] += 1;
+    } else if (userAnswers[8] === "성취와 성공") {
+      scores["가비 브라운"] += 3;
+      scores["라이너 브라운"] += 2;
+      scores["포르코 갤리아드"] += 2;
+      scores["피크 핑거"] += 1;
+    } else if (userAnswers[8] === "안정과 평화") {
+      scores["도트 픽시스"] += 3;
+      scores["베르톨트 후버"] += 2;
+      scores["마르코 보트"] += 2;
+      scores["팔코 그라이스"] += 1;
+    }
+    
+    // 질문 10: 새로운 도전에 대한 태도
+    if (userAnswers[9] === "새로운 가능성에 흥분하며 적극적으로 도전한다") {
+      scores["에렌 예거"] += 3;
+      scores["한지 조에"] += 3;
+      scores["가비 브라운"] += 2;
+      scores["코니 스프링거"] += 1;
+    } else if (userAnswers[9] === "위험과 이득을 철저히 분석한 후 행동한다") {
+      scores["지크 예거"] += 3;
+      scores["피크 핑거"] += 2;
+      scores["아르민 알레르트"] += 2;
+      scores["도트 픽시스"] += 1;
+    } else if (userAnswers[9] === "경험 많은 사람들의 조언을 구하고 신중하게 접근한다") {
+      scores["팔코 그라이스"] += 3;
+      scores["베르톨트 후버"] += 2;
+      scores["마르코 보트"] += 2;
+      scores["히스토리아 레이스"] += 1;
+    } else if (userAnswers[9] === "자신의 직관과 능력을 믿고 상황에 맞게 유연하게 대응한다") {
+      scores["리바이 아커만"] += 3;
+      scores["미카사 아커만"] += 2;
+      scores["장 키르슈타인"] += 2;
+      scores["사샤 블라우스"] += 1;
+    } else if (userAnswers[9] === "기존의 경험과 지식을 바탕으로 체계적으로 접근한다") {
+      scores["엘빈 스미스"] += 3;
+      scores["아르민 알레르트"] += 2;
+      scores["라이너 브라운"] += 2;
+      scores["그리샤 예거"] += 1;
+    }
+
+    // 가장 높은 점수를 받은 캐릭터 찾기
+    let highestScore = 0;
+    let topCharacters: string[] = [];
+
+    Object.entries(scores).forEach(([charName, score]) => {
+      if (score > highestScore) {
+        highestScore = score;
+        topCharacters = [charName];
+      } else if (score === highestScore) {
+        topCharacters.push(charName);
+      }
+    });
+
+    // 동점일 경우 이름 순으로 정렬하여 항상 일관된 결과 제공
+    topCharacters.sort();
+    const selectedCharName = topCharacters[0];
+
+    // 잘 맞는 캐릭터 선정 (메인 캐릭터 제외하고 상위 2개)
+    let compatibleCharacters: string[] = [];
+
+    const sortedScores = Object.entries(scores)
+      .filter(([name]) => name !== selectedCharName)
+      .sort((a, b) => b[1] - a[1]);
+
+    // 상위 2개 캐릭터 선택
+    compatibleCharacters = sortedScores.slice(0, 2).map(([name]) => name);
+
+    // 잘 안맞는 캐릭터 (최하위 점수 가진 캐릭터들 중 하나)
+    // 최하위 점수 찾기
+    let lowestScore = sortedScores[sortedScores.length - 1][1];
+    // 최하위 점수를 가진 캐릭터들 찾기
+    let lowestScoringCharacters = sortedScores
+      .filter(([_, score]) => score === lowestScore)
+      .map(([name]) => name);
+    
+    // 캐릭터 점수 분산을 위해 lowestScore+1 점수를 가진 캐릭터들도 포함
+    if (lowestScoringCharacters.length < 3 && sortedScores.length > 5) {
+      const secondLowestScore = sortedScores
+        .filter(([_, score]) => score > lowestScore)
+        .pop()?.[1];
+      
+      if (secondLowestScore) {
+        const moreCharacters = sortedScores
+          .filter(([_, score]) => score === secondLowestScore)
+          .map(([name]) => name);
+        
+        lowestScoringCharacters = [...lowestScoringCharacters, ...moreCharacters];
+      }
+    }
+    
+    // 항상 동일한 결과를 위해 이름순 정렬 후 첫 번째 선택
+    lowestScoringCharacters.sort();
+    const incompatibleCharacter = lowestScoringCharacters[0];
+
+    // 해당 이름의 캐릭터 객체 반환 (잘 맞는/안 맞는 캐릭터 정보 포함)
+    const mainCharacter =
+      characters.find((char) => char.name === selectedCharName) ||
+      characters[0];
+
+    return {
+      ...mainCharacter,
+      compatibleCharacters,
+      incompatibleCharacter,
+    };
   };
 
   const resetSurvey = () => {
@@ -429,7 +782,21 @@ export default function Home() {
   const progressPercentage = (currentQuestion / questions.length) * 100;
 
   return (
-    <div className="titan-card p-6 md:p-8">
+    <div className="titan-card p-6 md:p-8" id="survey-container">
+      {/* 벽 균열 효과 */}
+      {[1, 2, 3, 4, 5].map((crackNum) => (
+        <div 
+          key={crackNum}
+          className={`wall-crack crack-${crackNum} ${
+            cracksVisible.includes(crackNum) || result ? 'visible' : 'hidden'
+          }`}
+          style={{
+            opacity: cracksVisible.includes(crackNum) || result ? 1 : 0,
+            transition: 'opacity 0.8s ease-in'
+          }}
+        ></div>
+      ))}
+      
       {!result ? (
         <>
           <div className="mb-6">

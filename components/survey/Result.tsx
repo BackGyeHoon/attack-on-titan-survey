@@ -309,6 +309,7 @@ export function Result({
       "도트 픽시스": "/images/pixis.webp",
       유미르: "/images/ymir.webp",
       "포르코 갤리아드": "/images/porco.webp",
+      "마르코 보트": "/images/marco.webp",
       // 실제 배포 시 더 많은 캐릭터 이미지 추가
     };
 
@@ -491,103 +492,228 @@ export function Result({
   // 캐릭터 관계 데이터 - 잘 맞는 캐릭터와 안 맞는 캐릭터를 정의
   const characterRelationships: Record<
     string,
-    { compatible: string[]; incompatible: string }
+    { 
+      compatible: string[]; 
+      incompatible: string;
+      compatibleReasons: Record<string, string>;
+      incompatibleReason: string;
+    }
   > = {
     "에렌 예거": {
       compatible: ["미카사 아커만", "아르민 알레르트"],
       incompatible: "지크 예거",
+      compatibleReasons: {
+        "미카사 아커만": "어린 시절부터 깊은 유대감을 가진 가족과 같은 존재입니다. 미카사의 절대적인 충성심과 에렌의 결단력이 조화를 이룹니다.",
+        "아르민 알레르트": "마음을 터놓는 오랜 친구로, 아르민의 지적 능력과 에렌의 추진력이 완벽한 균형을 이룹니다."
+      },
+      incompatibleReason: "근본적으로 다른 세계관을 가지고 있어, 둘의 철학적 차이가 큰 갈등을 불러일으킵니다."
     },
     "미카사 아커만": {
       compatible: ["에렌 예거", "아르민 알레르트"],
       incompatible: "애니 레온하트",
+      compatibleReasons: {
+        "에렌 예거": "깊은 애정과 보호 본능을 가지고 있으며, 에렌에 대한 헌신적인 충성심을 가지고 있습니다.",
+        "아르민 알레르트": "서로의 부족한 점을 보완해주는 좋은 팀워크를 가지고 있습니다. 아르민의 전략과 미카사의 전투 능력이 완벽하게 조화됩니다."
+      },
+      incompatibleReason: "에렌을 위협하는 존재로 인식하며, 서로의 가치관과 목표가 명확히 충돌합니다."
     },
     "아르민 알레르트": {
       compatible: ["에렌 예거", "미카사 아커만"],
       incompatible: "베르톨트 후버",
+      compatibleReasons: {
+        "에렌 예거": "어릴 적부터 친구로서 서로의 꿈을 공유해왔으며, 에렌의 힘과 아르민의 지혜가 완벽한 조합을 이룹니다.",
+        "미카사 아커만": "서로의 장점을 존중하며, 아르민의 전략적 사고와 미카사의 전투 능력이 효과적으로 조화를 이룹니다."
+      },
+      incompatibleReason: "코로살 거인의 능력을 물려받은 복잡한 관계로, 서로의 과거와 정체성이 충돌합니다."
     },
     "리바이 아커만": {
       compatible: ["한지 조에", "엘빈 스미스"],
       incompatible: "케니 아커만",
+      compatibleReasons: {
+        "한지 조에": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "엘빈 스미스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "엘빈 스미스": {
       compatible: ["리바이 아커만", "한지 조에"],
       incompatible: "지크 예거",
+      compatibleReasons: {
+        "리바이 아커만": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "한지 조에": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "한지 조에": {
       compatible: ["리바이 아커만", "엘빈 스미스"],
       incompatible: "피크 핑거",
+      compatibleReasons: {
+        "리바이 아커만": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "엘빈 스미스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "지크 예거": {
       compatible: ["피크 핑거", "포르코 갤리아드"],
       incompatible: "에렌 예거",
+      compatibleReasons: {
+        "피크 핑거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "포르코 갤리아드": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "라이너 브라운": {
       compatible: ["베르톨트 후버", "애니 레온하트"],
       incompatible: "에렌 예거",
+      compatibleReasons: {
+        "베르톨트 후버": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "애니 레온하트": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "애니 레온하트": {
       compatible: ["라이너 브라운", "베르톨트 후버"],
       incompatible: "미카사 아커만",
+      compatibleReasons: {
+        "라이너 브라운": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "베르톨트 후버": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "베르톨트 후버": {
       compatible: ["라이너 브라운", "애니 레온하트"],
       incompatible: "아르민 알레르트",
+      compatibleReasons: {
+        "라이너 브라운": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "애니 레온하트": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "히스토리아 레이스": {
       compatible: ["유미르", "프록 폴스타"],
       incompatible: "리바이 아커만",
+      compatibleReasons: {
+        "유미르": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "프록 폴스타": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "가비 브라운": {
       compatible: ["팔코 그라이스", "라이너 브라운"],
       incompatible: "사샤 블라우스",
+      compatibleReasons: {
+        "팔코 그라이스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "라이너 브라운": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "팔코 그라이스": {
       compatible: ["가비 브라운", "라이너 브라운"],
       incompatible: "포르코 갤리아드",
+      compatibleReasons: {
+        "가비 브라운": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "라이너 브라운": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "피크 핑거": {
       compatible: ["지크 예거", "포르코 갤리아드"],
       incompatible: "코니 스프링거",
+      compatibleReasons: {
+        "지크 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "포르코 갤리아드": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "코니 스프링거": {
       compatible: ["사샤 블라우스", "장 키르슈타인"],
       incompatible: "라이너 브라운",
+      compatibleReasons: {
+        "사샤 블라우스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "장 키르슈타인": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "사샤 블라우스": {
       compatible: ["코니 스프링거", "니콜로"],
       incompatible: "가비 브라운",
+      compatibleReasons: {
+        "코니 스프링거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "니콜로": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "장 키르슈타인": {
       compatible: ["마르코 보트", "미카사 아커만"],
       incompatible: "에렌 예거",
+      compatibleReasons: {
+        "마르코 보트": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "미카사 아커만": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "그리샤 예거": {
       compatible: ["카를라 예거", "지크 예거"],
       incompatible: "프리다 레이스",
+      compatibleReasons: {
+        "카를라 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "지크 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "카를라 예거": {
       compatible: ["그리샤 예거", "에렌 예거"],
       incompatible: "키이스 샤디스",
+      compatibleReasons: {
+        "그리샤 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "에렌 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "프록 폴스타": {
       compatible: ["에렌 예거", "히스토리아 레이스"],
       incompatible: "아르민 알레르트",
+      compatibleReasons: {
+        "에렌 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "히스토리아 레이스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "케니 아커만": {
       compatible: ["리바이 아커만", "유리 레이스"],
       incompatible: "에렌 예거",
+      compatibleReasons: {
+        "리바이 아커만": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "유리 레이스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "도트 픽시스": {
       compatible: ["키이스 샤디스", "한지 조에"],
       incompatible: "에렌 예거",
+      compatibleReasons: {
+        "키이스 샤디스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "한지 조에": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     유미르: {
       compatible: ["히스토리아 레이스", "라이너 브라운"],
       incompatible: "프록 폴스타",
+      compatibleReasons: {
+        "히스토리아 레이스": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "라이너 브라운": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
     "포르코 갤리아드": {
       compatible: ["피크 핑거", "지크 예거"],
       incompatible: "라이너 브라운",
+      compatibleReasons: {
+        "피크 핑거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다.",
+        "지크 예거": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     },
   };
 
@@ -596,6 +722,11 @@ export function Result({
     const defaultRelationships = {
       compatible: ["미카사 아커만", "아르민 알레르트"],
       incompatible: "지크 예거",
+      compatibleReasons: {
+        "미카사 아커만": "함께할 때 더 강해지는 관계입니다.",
+        "아르민 알레르트": "서로의 강점을 보완해주는 균형 잡힌 관계입니다."
+      },
+      incompatibleReason: "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다."
     };
 
     return characterRelationships[name] || defaultRelationships;
@@ -611,6 +742,21 @@ export function Result({
       : relationships.compatible;
   const displayIncompatible =
     incompatibleCharacter || relationships.incompatible;
+
+  // 호환 이유 및 비호환 이유 가져오기
+  const getCompatibleReason = (compatChar: string) => {
+    if (compatibleCharacters.length > 0) {
+      return "함께할 때 더 강해지는 관계입니다.";
+    }
+    return relationships.compatibleReasons[compatChar] || "서로 잘 맞는 궁합을 가지고 있습니다.";
+  };
+
+  const getIncompatibleReason = () => {
+    if (incompatibleCharacter) {
+      return "가치관과 목표의 차이로 인해 충돌이 자주 발생합니다.";
+    }
+    return relationships.incompatibleReason || "서로 상극인 관계로, 함께하면 갈등이 발생할 수 있습니다.";
+  };
 
   return (
     <div className="text-center">
@@ -713,7 +859,7 @@ export function Result({
         <div className="mb-8">
           <h3 className="titan-header text-lg mb-4">캐릭터 상성</h3>
 
-          <div className="p-4 bg-green-500 bg-opacity-10 rounded-md mb-4">
+          <div className="p-4 bg-white bg-opacity-15 rounded-md mb-4 border-2 border-green-500">
             <h4 className="text-green-500 text-base font-bold mb-2">
               잘 맞는 캐릭터
             </h4>
@@ -721,9 +867,9 @@ export function Result({
               {displayCompatible.map((compatChar, index) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center bg-green-500 bg-opacity-20 px-3 py-3 rounded-md"
+                  className="flex flex-col items-center bg-white bg-opacity-20 px-3 py-3 rounded-md shadow-md border border-green-400"
                 >
-                  <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200">
+                  <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-green-400">
                     {getDefaultImage(compatChar) ? (
                       <img
                         src={getDefaultImage(compatChar) || ""}
@@ -746,24 +892,27 @@ export function Result({
                       </div>
                     )}
                   </div>
-                  <span className="text-sm font-medium text-center">
+                  <span className="text-sm font-medium text-center text-white">
                     {compatChar}
                   </span>
+                  <p className="text-xs text-white mt-2 text-center px-1">
+                    {getCompatibleReason(compatChar)}
+                  </p>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-green-700 mt-2">
+            <p className="text-xs text-white mt-2 bg-green-600 bg-opacity-80 p-2 rounded-md">
               이 캐릭터들과 함께하면 더 큰 시너지를 발휘할 수 있습니다.
             </p>
           </div>
 
-          <div className="p-4 bg-red-500 bg-opacity-10 rounded-md">
+          <div className="p-4 bg-white bg-opacity-15 rounded-md border-2 border-red-500">
             <h4 className="text-red-500 text-base font-bold mb-2">
               잘 안 맞는 캐릭터
             </h4>
             <div className="flex justify-center">
-              <div className="flex flex-col items-center bg-red-500 bg-opacity-20 px-4 py-3 rounded-md">
-                <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200">
+              <div className="flex flex-col items-center bg-white bg-opacity-20 px-4 py-3 rounded-md shadow-md border border-red-400">
+                <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-red-400">
                   {getDefaultImage(displayIncompatible) ? (
                     <img
                       src={getDefaultImage(displayIncompatible) || ""}
@@ -786,12 +935,15 @@ export function Result({
                     </div>
                   )}
                 </div>
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-white">
                   {displayIncompatible}
                 </span>
+                <p className="text-xs text-white mt-2 text-center px-1">
+                  {getIncompatibleReason()}
+                </p>
               </div>
             </div>
-            <p className="text-xs text-red-700 mt-2">
+            <p className="text-xs text-white mt-2 bg-red-600 bg-opacity-80 p-2 rounded-md">
               이 캐릭터와는 가치관이나 행동방식에서 충돌이 있을 수 있습니다.
             </p>
           </div>

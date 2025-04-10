@@ -34,8 +34,9 @@ export function Question({
   questionIndex,
 }: QuestionProps) {
   // 클라이언트 사이드에서만 렌더링되도록 상태 설정
-  const [quote, setQuote] = useState<string>("저기 바깥 세계에는 자유가 있다.");
+  const [quote, setQuote] = useState<string>("");
   const [mounted, setMounted] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // 컴포넌트가 마운트된 후에만 랜덤 명언 선택
   useEffect(() => {
@@ -45,6 +46,24 @@ export function Question({
     setQuote(famousQuotes[quoteIndex]);
   }, [questionIndex]);
 
+  // 중복 클릭 방지 및 이벤트 처리 최적화
+  const handleAnswerClick = (e: React.MouseEvent, option: string) => {
+    e.preventDefault();
+    
+    // 이미 처리 중이면 중복 실행 방지
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    
+    // 답변 처리
+    onAnswer(option);
+    
+    // 일정 시간 후 처리 상태 초기화 (다음 질문에서 다시 클릭 가능하도록)
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 500);
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="titan-header text-xl font-bold">{question}</h2>
@@ -53,8 +72,11 @@ export function Question({
         {options.map((option, index) => (
           <button
             key={index}
-            className="titan-button w-full text-left p-3 rounded-md flex items-center hover:bg-opacity-90 transition-all"
-            onClick={() => onAnswer(option)}
+            className={`titan-button w-full text-left p-3 rounded-md flex items-center hover:bg-opacity-90 transition-all ${
+              isProcessing ? "opacity-70 pointer-events-none" : ""
+            }`}
+            onClick={(e) => handleAnswerClick(e, option)}
+            disabled={isProcessing}
           >
             <div className="mr-3 w-7 h-7 flex items-center justify-center rounded-full border-2 border-accent text-accent font-bold">
               {index + 1}

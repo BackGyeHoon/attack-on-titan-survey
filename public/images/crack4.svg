@@ -1,0 +1,13 @@
+<svg width="120" height="140" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 복잡한 균열 패턴 -->
+  <path d="M60 0 L65 20 L55 40 L60 60 L50 80 L60 100 L55 120 L60 140" stroke="#5D4037" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M65 20 L80 25 L95 15 L110 20" stroke="#5D4037" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M55 40 L40 45 L25 40 L10 45" stroke="#5D4037" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M60 60 L75 65 L90 55" stroke="#5D4037" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M50 80 L35 85 L20 80 L5 85" stroke="#5D4037" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M60 100 L75 105 L90 95 L105 100" stroke="#5D4037" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- 추가 균열 -->
+  <path d="M55 20 L50 15 L45 20 L40 15" stroke="#5D4037" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M60 60 L55 55 L50 60 L45 55" stroke="#5D4037" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M50 80 L45 75 L40 80 L35 75" stroke="#5D4037" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+</svg> 
