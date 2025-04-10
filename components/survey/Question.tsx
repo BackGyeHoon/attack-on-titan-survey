@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface QuestionProps {
   question: string;
@@ -87,7 +87,7 @@ export function Question({
       </div>
 
       <div className="mt-8 text-xs text-muted italic text-center p-4 bg-primary-light bg-opacity-30 rounded-md">
-        "{mounted ? quote : "저기 바깥 세계에는 자유가 있다."}"
+        &ldquo;{mounted ? quote : "저기 바깥 세계에는 자유가 있다."}&rdquo;
       </div>
     </div>
   );

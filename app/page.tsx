@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Question } from "../components/survey/Question";
 import { Result } from "../components/survey/Result";
 
@@ -249,49 +249,10 @@ export default function Home() {
     incompatibleCharacter?: string;
   } | null>(null);
   const [progressClass, setProgressClass] = useState("question-progress-0");
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [cracksVisible, setCracksVisible] = useState<number[]>([]);
 
-  // 진행률에 따라 벽 무너짐 효과
-  useEffect(() => {
-    if (result) {
-      handleWallTransition("question-progress-100");
-      return;
-    }
-
-    // 각 질문마다 벽 무너짐 효과 적용
-    handleWallTransition(`question-progress-${currentQuestion}`);
-  }, [currentQuestion, result]);
-
-  // 벽 무너짐 애니메이션 처리 함수
-  const handleWallTransition = (newClass: string) => {
-    if (progressClass === newClass) return;
-    
-    setIsTransitioning(true);
-    document.body.classList.add('progress-transition');
-    
-    // 파편 효과 생성
-    createDebrisEffect();
-    
-    // 새로운 균열 생성
-    if (currentQuestion > 0 && !result) {
-      const newCracks = [...cracksVisible];
-      if (!newCracks.includes(currentQuestion)) {
-        newCracks.push(currentQuestion);
-        setCracksVisible(newCracks);
-      }
-    }
-    
-    // 애니메이션이 완료된 후 클래스 변경
-    setTimeout(() => {
-      setProgressClass(newClass);
-      document.body.classList.remove('progress-transition');
-      setIsTransitioning(false);
-    }, 1200); // 애니메이션 지속 시간과 맞춤
-  };
-
   // 파편 효과 생성 함수
-  const createDebrisEffect = () => {
+  const createDebrisEffect = useCallback(() => {
     if (typeof document === 'undefined') return;
     
     const container = document.getElementById('survey-container');
@@ -343,7 +304,44 @@ export default function Home() {
         }
       }, 3000);
     }
-  };
+  }, [currentQuestion]);
+
+  // 벽 무너짐 애니메이션 처리 함수
+  const handleWallTransition = useCallback((newClass: string) => {
+    if (progressClass === newClass) return;
+    
+    document.body.classList.add('progress-transition');
+    
+    // 파편 효과 생성
+    createDebrisEffect();
+    
+    // 새로운 균열 생성
+    if (currentQuestion > 0 && !result) {
+      const newCracks = [...cracksVisible];
+      if (!newCracks.includes(currentQuestion)) {
+        newCracks.push(currentQuestion);
+        setCracksVisible(newCracks);
+      }
+    }
+    
+    // 애니메이션이 완료된 후 클래스 변경
+    setTimeout(() => {
+      setProgressClass(newClass);
+      document.body.classList.remove('progress-transition');
+    }, 1200); // 애니메이션 지속 시간과 맞춤
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuestion, cracksVisible, progressClass, result]);
+
+  // 진행률에 따라 벽 무너짐 효과
+  useEffect(() => {
+    if (result) {
+      handleWallTransition("question-progress-100");
+      return;
+    }
+
+    // 각 질문마다 벽 무너짐 효과 적용
+    handleWallTransition(`question-progress-${currentQuestion}`);
+  }, [currentQuestion, result, handleWallTransition]);
 
   // body 클래스에 진행률 클래스 추가
   useEffect(() => {
@@ -453,7 +451,7 @@ export default function Home() {
   
   const determineCharacter = (userAnswers: string[]) => {
     // 답변 패턴에 기반한 간단한 점수 시스템
-    let scores: Record<string, number> = {};
+    const scores: Record<string, number> = {};
 
     // 초기화
     characters.forEach((char) => {
@@ -736,21 +734,21 @@ export default function Home() {
 
     // 잘 안맞는 캐릭터 (최하위 점수 가진 캐릭터들 중 하나)
     // 최하위 점수 찾기
-    let lowestScore = sortedScores[sortedScores.length - 1][1];
+    const lowestScore = sortedScores[sortedScores.length - 1][1];
     // 최하위 점수를 가진 캐릭터들 찾기
     let lowestScoringCharacters = sortedScores
-      .filter(([_, score]) => score === lowestScore)
+      .filter(([name, score]) => score === lowestScore)
       .map(([name]) => name);
     
     // 캐릭터 점수 분산을 위해 lowestScore+1 점수를 가진 캐릭터들도 포함
     if (lowestScoringCharacters.length < 3 && sortedScores.length > 5) {
       const secondLowestScore = sortedScores
-        .filter(([_, score]) => score > lowestScore)
+        .filter(([name, score]) => score > lowestScore)
         .pop()?.[1];
       
       if (secondLowestScore) {
         const moreCharacters = sortedScores
-          .filter(([_, score]) => score === secondLowestScore)
+          .filter(([name, score]) => score === secondLowestScore)
           .map(([name]) => name);
         
         lowestScoringCharacters = [...lowestScoringCharacters, ...moreCharacters];

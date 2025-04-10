@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface ResultProps {
   character: string;
@@ -269,20 +270,30 @@ export function Result({
   incompatibleCharacter = "",
 }: ResultProps) {
   const [imageError, setImageError] = useState(false);
-  const [characterQuote, setCharacterQuote] =
-    useState<string>("싸워! 이겨! 살아!");
-  const [mounted, setMounted] = useState(false);
+  const [characterImg, setCharacterImg] = useState<string | null>(null);
+  const [quote, setQuote] = useState<string>("");
+  const [localIncompatible, setLocalIncompatible] = useState<string>(incompatibleCharacter);
 
-  // 클라이언트 사이드에서만 명언 선택
   useEffect(() => {
-    setMounted(true);
-    // 해당 캐릭터의 명언이 있으면 그 중에서 랜덤 선택, 없으면 공통 명언에서 선택
+    if (character && !image) {
+      const img = getDefaultImage(character);
+      setCharacterImg(img);
+    } else {
+      setCharacterImg(image || null);
+    }
+
     const quotes = characterQuotes[character] || commonQuotes;
     const randomIndex = Math.floor(Math.random() * quotes.length);
-    setCharacterQuote(quotes[randomIndex]);
-  }, [character]);
+    setQuote(quotes[randomIndex]);
 
-  // 기본 이미지 매핑 (실제 프로젝트에서는 더 나은 이미지를 사용하세요)
+    if (!incompatibleCharacter) {
+      const characterNames = Object.keys(characterQuotes);
+      const filteredChars = characterNames.filter((name) => name !== character);
+      const randomChar = filteredChars[Math.floor(Math.random() * filteredChars.length)];
+      setLocalIncompatible(randomChar);
+    }
+  }, [character, image, incompatibleCharacter]);
+
   const getDefaultImage = (name: string) => {
     const characterMap: Record<string, string> = {
       "에렌 예거": "/images/eren.webp",
@@ -310,14 +321,11 @@ export function Result({
       유미르: "/images/ymir.webp",
       "포르코 갤리아드": "/images/porco.webp",
       "마르코 보트": "/images/marco.webp",
-      // 실제 배포 시 더 많은 캐릭터 이미지 추가
     };
 
-    // 기본 이미지가 없을 경우 null 반환
     return characterMap[name] || null;
   };
 
-  // 속성 매핑 (캐릭터별 주요 특성)
   const getAttributes = (name: string) => {
     const attributeMap: Record<
       string,
@@ -484,12 +492,8 @@ export function Result({
     );
   };
 
-  const characterImg = image || getDefaultImage(character);
   const attributes = getAttributes(character);
 
-  const defaultQuote = "싸워! 이겨! 살아!";
-
-  // 캐릭터 관계 데이터 - 잘 맞는 캐릭터와 안 맞는 캐릭터를 정의
   const characterRelationships: Record<
     string,
     { 
@@ -717,7 +721,6 @@ export function Result({
     },
   };
 
-  // 입력 캐릭터에 대한 관계 정보 가져오기
   const getRelationships = (name: string) => {
     const defaultRelationships = {
       compatible: ["미카사 아커만", "아르민 알레르트"],
@@ -732,18 +735,14 @@ export function Result({
     return characterRelationships[name] || defaultRelationships;
   };
 
-  // 관계 정보 가져오기
   const relationships = getRelationships(character);
 
-  // 실제 표시할 잘 맞는 캐릭터들과 안 맞는 캐릭터
   const displayCompatible =
     compatibleCharacters.length > 0
       ? compatibleCharacters
       : relationships.compatible;
-  const displayIncompatible =
-    incompatibleCharacter || relationships.incompatible;
+  const finalIncompatible = incompatibleCharacter || localIncompatible || relationships.incompatible;
 
-  // 호환 이유 및 비호환 이유 가져오기
   const getCompatibleReason = (compatChar: string) => {
     if (compatibleCharacters.length > 0) {
       return "함께할 때 더 강해지는 관계입니다.";
@@ -771,24 +770,25 @@ export function Result({
 
         {!imageError && characterImg ? (
           <div className="avatar-container mb-6">
-            <img
+            <Image
               src={characterImg}
               alt={character}
+              width={200}
+              height={200}
+              objectFit="cover"
               className="avatar-image"
               onError={() => setImageError(true)}
             />
           </div>
         ) : (
-          <div className="avatar-container mb-6 flex items-center justify-center">
-            <span className="text-4xl font-bold text-primary">
-              {character[0] || "?"}
-            </span>
+          <div className="default-avatar mb-6">
+            <div className="avatar-initials">{character.charAt(0)}</div>
           </div>
         )}
 
         <div className="mb-8 p-5 bg-primary-light bg-opacity-30 rounded-md">
           <p className="text-muted italic mb-3 font-medium">
-            "{mounted ? characterQuote : defaultQuote}"
+            &ldquo;{quote}&rdquo;
           </p>
           <p className="text-foreground">{description}</p>
         </div>
@@ -855,7 +855,6 @@ export function Result({
           </div>
         </div>
 
-        {/* 캐릭터 상성 정보 추가 */}
         <div className="mb-8">
           <h3 className="titan-header text-lg mb-4">캐릭터 상성</h3>
 
@@ -871,24 +870,20 @@ export function Result({
                 >
                   <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-green-400">
                     {getDefaultImage(compatChar) ? (
-                      <img
+                      <Image
                         src={getDefaultImage(compatChar) || ""}
                         alt={compatChar}
+                        width={64}
+                        height={64}
+                        objectFit="cover"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
-                          if (target.parentElement) {
-                            target.parentElement.innerHTML =
-                              compatChar[0] || "?";
-                            target.parentElement.className +=
-                              " flex items-center justify-center text-lg font-bold";
-                          }
+                          e.currentTarget.style.display = "none";
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-lg font-bold">
-                        {compatChar[0] || "?"}
+                      <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-bold">
+                        {compatChar.charAt(0)}
                       </div>
                     )}
                   </div>
@@ -913,30 +908,26 @@ export function Result({
             <div className="flex justify-center">
               <div className="flex flex-col items-center bg-white bg-opacity-20 px-4 py-3 rounded-md shadow-md border border-red-400">
                 <div className="w-16 h-16 rounded-full overflow-hidden mb-2 bg-gray-200 border-2 border-red-400">
-                  {getDefaultImage(displayIncompatible) ? (
-                    <img
-                      src={getDefaultImage(displayIncompatible) || ""}
-                      alt={displayIncompatible}
+                  {getDefaultImage(finalIncompatible) ? (
+                    <Image
+                      src={getDefaultImage(finalIncompatible) || ""}
+                      alt={finalIncompatible}
+                      width={64}
+                      height={64}
+                      objectFit="cover"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                        if (target.parentElement) {
-                          target.parentElement.innerHTML =
-                            displayIncompatible[0] || "?";
-                          target.parentElement.className +=
-                            " flex items-center justify-center text-lg font-bold";
-                        }
+                        e.currentTarget.style.display = "none";
                       }}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-lg font-bold">
-                      {displayIncompatible[0] || "?"}
+                    <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-600 font-bold">
+                      {finalIncompatible.charAt(0)}
                     </div>
                   )}
                 </div>
                 <span className="text-sm font-medium text-white">
-                  {displayIncompatible}
+                  {finalIncompatible}
                 </span>
                 <p className="text-xs text-white mt-2 text-center px-1">
                   {getIncompatibleReason()}
