@@ -1,0 +1,185 @@
+/* 구글 폰트 @import */
+@import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 기본 색상 (첫 이미지 느낌의 어두운 주황/적갈색) */
+  --background-start: #2b1a16;
+  --background-end: #4a8be3;
+  --background: var(--background-start);
+  --card-bg: #32211c;
+  --foreground: #f8e8d8;
+  --primary: #ff7a5c;
+  --primary-light: #3a2a27;
+  --secondary: #8b939e;
+  --accent: #ff9c6b;
+  --muted: #b3a49e;
+  --border: #473630;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-highlight: rgba(255, 255, 255, 0.05);
+  --font-title: "Black Han Sans", sans-serif;
+  --font-body: "Nanum Gothic", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 다크모드에서도 동일하게 적용 */
+    --background-start: #2b1a16;
+    --background-end: #4a8be3;
+    --background: var(--background-start);
+    --card-bg: #32211c;
+    --foreground: #f8e8d8;
+    --primary: #ff7a5c;
+    --primary-light: #3a2a27;
+    --secondary: #8b939e;
+    --accent: #ff9c6b;
+    --muted: #b3a49e;
+    --border: #473630;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-highlight: rgba(255, 255, 255, 0.05);
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
+/* 진격의 거인 스타일 컴포넌트 */
+.titan-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0px 8px 24px var(--shadow-color);
+  transition: all 0.3s ease, background-color 0.8s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.titan-header {
+  font-family: var(--font-title);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--accent);
+}
+
+.titan-button {
+  background: var(--primary-light);
+  color: var(--foreground);
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.titan-button:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.titan-button:active {
+  transform: translateY(0);
+}
+
+/* 배경색 변화 로직 */
+.question-progress-0 {
+  --background: var(--background-start);
+  --card-bg: #32211c;
+  --accent: #ff9c6b;
+}
+
+.question-progress-20 {
+  --background: #352117;
+  --card-bg: #3a2922;
+  --accent: #ffa175;
+}
+
+.question-progress-40 {
+  --background: #2d334a;
+  --card-bg: #353c57;
+  --accent: #ffab80;
+}
+
+.question-progress-60 {
+  --background: #274065;
+  --card-bg: #2e4978;
+  --accent: #80b5ff;
+}
+
+.question-progress-80 {
+  --background: #1e4d80;
+  --card-bg: #245a95;
+  --accent: #6bc1ff;
+}
+
+.question-progress-100 {
+  --background: var(--background-end);
+  --card-bg: #5698e8;
+  --accent: #ffffff;
+  --foreground: #ffffff;
+}
+
+/* 내용 컨테이너 */
+.content-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 아바타 컨테이너 */
+.avatar-container {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 3px solid var(--accent);
+  padding: 3px;
+  background: var(--card-bg);
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* 특성 바 */
+.stat-bar-container {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  height: 10px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.stat-bar {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.8s ease;
+}
+
+.stat-bar-strength {
+  background: linear-gradient(90deg, #ff7a5c, #ff9380);
+}
+
+.stat-bar-intelligence {
+  background: linear-gradient(90deg, #4a55a2, #6c77c9);
+}
+
+.stat-bar-leadership {
+  background: linear-gradient(90deg, #7ac74f, #a1e065);
+}
+
+.stat-bar-compassion {
+  background: linear-gradient(90deg, #ffb347, #ffcc33);
+}
