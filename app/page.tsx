@@ -293,6 +293,35 @@ export default function Home() {
     }
   }, []);
 
+  // 문제 진행 상태에 따른 body 클래스 업데이트
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      // 모든 progress 클래스 제거
+      document.body.classList.remove('progress-0', 'progress-20', 'progress-40', 'progress-60', 'progress-80', 'progress-100');
+      
+      // 결과 화면인 경우 progress-100 적용
+      if (result) {
+        document.body.classList.add('progress-100');
+      } else {
+        // 진행도에 따른 클래스 적용
+        const progressPercentage = (currentQuestion / questions.length) * 100;
+        if (progressPercentage === 0) {
+          document.body.classList.add('progress-0');
+        } else if (progressPercentage <= 20) {
+          document.body.classList.add('progress-20');
+        } else if (progressPercentage <= 40) {
+          document.body.classList.add('progress-40');
+        } else if (progressPercentage <= 60) {
+          document.body.classList.add('progress-60');
+        } else if (progressPercentage <= 80) {
+          document.body.classList.add('progress-80');
+        } else {
+          document.body.classList.add('progress-100');
+        }
+      }
+    }
+  }, [currentQuestion, result, questions.length]);
+
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers, answer];
     setAnswers(newAnswers);
@@ -596,18 +625,18 @@ export default function Home() {
     const lowestScore = sortedScores[sortedScores.length - 1][1];
     // 최하위 점수를 가진 캐릭터들 찾기
     let lowestScoringCharacters = sortedScores
-      .filter(([name, score]) => score === lowestScore)
+      .filter(([, score]) => score === lowestScore)
       .map(([name]) => name);
     
     // 캐릭터 점수 분산을 위해 lowestScore+1 점수를 가진 캐릭터들도 포함
     if (lowestScoringCharacters.length < 3 && sortedScores.length > 5) {
       const secondLowestScore = sortedScores
-        .filter(([name, score]) => score > lowestScore)
+        .filter(([, score]) => score > lowestScore)
         .pop()?.[1];
       
       if (secondLowestScore) {
         const moreCharacters = sortedScores
-          .filter(([name, score]) => score === secondLowestScore)
+          .filter(([, score]) => score === secondLowestScore)
           .map(([name]) => name);
         
         lowestScoringCharacters = [...lowestScoringCharacters, ...moreCharacters];
@@ -640,11 +669,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col items-center p-4 relative">
-   
+      {/* 벽 균열 효과 추가 */}
+      <div className="wall-crack crack-1"></div>
+      <div className="wall-crack crack-2"></div>
+      <div className="wall-crack crack-3"></div>
+      <div className="wall-crack crack-4"></div>
+      <div className="wall-crack crack-5"></div>
 
       <div id="survey-container" className="content-container w-full max-w-3xl mx-auto">
-        {/* 벽 균열 효과 제거, 비디오 배경으로 대체됨 */}
-        
         {result ? (
           <Result 
             character={result.name}
@@ -655,7 +687,7 @@ export default function Home() {
           />
         ) : (
           <>
-            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6">진격의 거인 성격 테스트</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-accent">진격의 거인 성격 테스트</h1>
             <div className="progress-bar mb-8">
               <div 
                 className="progress-fill"

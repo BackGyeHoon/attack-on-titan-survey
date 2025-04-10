@@ -937,16 +937,16 @@ export function Result({
                         </div>
                       )}
                     </div>
-                    <span className="text-sm font-medium text-center text-white">
+                    <span className="text-sm font-medium text-center text-black-500">
                       {compatChar}
                     </span>
-                    <p className="text-xs text-white mt-2 text-center px-1">
+                    <p className="text-xs text-black-200 mt-2 text-center px-1">
                       {getCompatibleReason(compatChar)}
                     </p>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-white mt-2 bg-green-600 bg-opacity-80 p-2 rounded-md">
+              <p className="text-xs text-amber-100 mt-2 bg-green-600 bg-opacity-80 p-2 rounded-md">
                 이 캐릭터들과 함께하면 더 큰 시너지를 발휘할 수 있습니다.
               </p>
             </div>
@@ -976,15 +976,15 @@ export function Result({
                       </div>
                     )}
                   </div>
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-sm font-medium text-black-500">
                     {finalIncompatible}
                   </span>
-                  <p className="text-xs text-white mt-2 text-center px-1">
+                  <p className="text-xs text-black-200 mt-2 text-center px-1">
                     {getIncompatibleReason()}
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-white mt-2 bg-red-600 bg-opacity-80 p-2 rounded-md">
+              <p className="text-xs text-amber-100 mt-2 bg-red-600 bg-opacity-80 p-2 rounded-md">
                 이 캐릭터와는 가치관이나 행동방식에서 충돌이 있을 수 있습니다.
               </p>
             </div>

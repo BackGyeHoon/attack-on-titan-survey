@@ -71,6 +71,7 @@ export async function GET(request: NextRequest) {
           }}
         >
           {/* 배경 이미지 */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl}
             alt={characterName}
