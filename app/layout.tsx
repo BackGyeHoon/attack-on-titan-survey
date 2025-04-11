@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
     images: [
       {
-        url: "/images/og-image.webp",
+        url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "진격의 거인 캐릭터 테스트",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "진격의 거인 캐릭터 테스트",
     description: "당신이 진격의 거인의 어떤 캐릭터와 가장 닮았는지 알아보세요!",
-    images: ["/images/og-image.webp"],
+    images: ["/images/og-image.jpg"],
   },
 };
 
