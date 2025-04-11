@@ -350,15 +350,14 @@ export function Result({
   image,
   onReset,
   compatibleCharacters = [],
-  incompatibleCharacter = "",
+  incompatibleCharacter,
 }: ResultProps) {
-  // 상태 관리
-  const [quote, setQuote] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [randomQuote, setRandomQuote] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
 
-  // 캐릭터 정보 처리
+  // 캐릭터 이름 가져오기
   const characterName = getCharacterName(character);
   const characterDesc =
     description || (typeof character === "object" ? character.description : "");
@@ -385,18 +384,32 @@ export function Result({
       const availableQuotes =
         characterQuotes.length > 0 ? characterQuotes : commonQuotes;
       const randomIndex = Math.floor(Math.random() * availableQuotes.length);
-      setQuote(availableQuotes[randomIndex]);
+      setRandomQuote(availableQuotes[randomIndex]);
     }
   }, [mounted, characterName]);
 
-  // URL 공유 기능
-  const handleShare = async () => {
-    try {
-      const url = new URL(window.location.href);
-      url.search = ""; // 기존 쿼리 파라미터 제거
-      url.searchParams.set("char", characterName);
+  // 공유 URL 생성
+  const generateShareUrl = () => {
+    // 기본 URL (배포된 사이트 주소)
+    const baseUrl =
+      typeof window !== "undefined"
+        ? `${window.location.protocol}//${window.location.host}`
+        : "https://attack-on-titan-survey.vercel.app";
 
-      await navigator.clipboard.writeText(url.toString());
+    // URL 인코딩된 캐릭터 이름
+    const encodedName = encodeURIComponent(characterName);
+
+    // URL 파라미터로 캐릭터 이름 추가
+    return `${baseUrl}?char=${encodedName}`;
+  };
+
+  // 공유 기능
+  const handleShare = async () => {
+    const shareUrl = generateShareUrl();
+
+    try {
+      // 클립보드에 URL 복사
+      await navigator.clipboard.writeText(shareUrl);
       setShareMessage(
         `"${characterName}" 결과 URL이 복사되었습니다. 원하는 곳에 붙여넣으세요!`
       );
@@ -462,9 +475,9 @@ export function Result({
           </div>
 
           {/* 캐릭터 명언 (모바일에서는 이미지 아래에 표시) */}
-          {mounted && quote && (
+          {mounted && randomQuote && (
             <div className="italic text-sm text-center text-muted mb-4 md:mb-0 p-4 rounded-md bg-primary-light bg-opacity-20">
-              &ldquo;{quote}&rdquo;
+              &ldquo;{randomQuote}&rdquo;
             </div>
           )}
         </div>

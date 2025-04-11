@@ -253,6 +253,58 @@ export default function Home() {
   const [answers, setAnswers] = useState<string[]>([]);
   const [result, setResult] = useState<(typeof characters)[0] | null>(null);
 
+  // URL에서 캐릭터 파라미터 가져오기
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const charParam = urlParams.get("char");
+
+      // 캐릭터 파라미터가 있으면 결과 표시
+      if (charParam) {
+        const decodedCharName = decodeURIComponent(charParam);
+        // 해당 캐릭터 찾기
+        const foundChar = characters.find((c) => c.name === decodedCharName);
+
+        if (foundChar) {
+          // 결과 계산 및 표시 (호환되는 캐릭터와 호환되지 않는 캐릭터 설정)
+          setResult({
+            ...foundChar,
+            compatibleCharacters: getCompatibleCharacters(decodedCharName),
+            incompatibleCharacter: getIncompatibleCharacter(decodedCharName),
+          });
+        }
+      }
+    }
+  }, []);
+
+  // 호환되는 캐릭터 가져오기 (임의로 2개 선택)
+  const getCompatibleCharacters = (mainCharName: string): string[] => {
+    // 메인 캐릭터를 제외한 나머지 캐릭터 중에서 2개 선택
+    const otherChars = characters
+      .filter((c) => c.name !== mainCharName)
+      .map((c) => c.name);
+
+    // 무작위로 섞기
+    const shuffled = [...otherChars].sort(() => 0.5 - Math.random());
+
+    // 앞에서 2개 선택
+    return shuffled.slice(0, 2);
+  };
+
+  // 호환되지 않는 캐릭터 가져오기 (임의로 1개 선택)
+  const getIncompatibleCharacter = (mainCharName: string): string => {
+    // 메인 캐릭터를 제외한 나머지 캐릭터 중에서 선택
+    const otherChars = characters
+      .filter((c) => c.name !== mainCharName)
+      .map((c) => c.name);
+
+    // 무작위로 섞기
+    const shuffled = [...otherChars].sort(() => 0.5 - Math.random());
+
+    // 첫 번째 선택
+    return shuffled[0];
+  };
+
   // 브라우저 환경에서만 실행되도록 useEffect 사용
   useEffect(() => {
     // 페이지 로드 시 스크롤을 맨 위로 이동
