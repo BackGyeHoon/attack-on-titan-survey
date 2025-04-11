@@ -32,6 +32,32 @@ interface ResultProps {
   incompatibleCharacter?: string;
 }
 
+// Next.js Image에서 onError 이벤트 타입 지정
+type ImageOnErrorEvent = React.SyntheticEvent<HTMLImageElement, Event>;
+
+// 폴백(fallback) 이미지 렌더링 함수 생성
+const renderFallbackInitial = (
+  element: HTMLImageElement,
+  character: string,
+  small: boolean = false
+) => {
+  element.onerror = null;
+  element.src = "";
+  element.style.background = `var(--accent)`;
+  element.style.display = "flex";
+  element.style.alignItems = "center";
+  element.style.justifyContent = "center";
+  element.setAttribute("data-content", character.charAt(0));
+
+  // 첫 글자를 보여주는 가상 요소 생성
+  const textNode = document.createTextNode(character.charAt(0));
+  element.appendChild(textNode);
+  // 이미지 크기에 따른 폰트 크기 조정
+  element.style.fontSize = small ? "1.5rem" : "2.5rem";
+  element.style.color = "white";
+  element.style.fontWeight = "bold";
+};
+
 // 캐릭터 이름 가져오기 (문자열 또는 객체)
 const getCharacterName = (character: string | Character): string => {
   return typeof character === "object" ? character.name : character;
@@ -386,6 +412,16 @@ export function Result({
     setShareMessage("");
   };
 
+  // 이미지 오류 핸들러
+  const handleImageError = (
+    e: ImageOnErrorEvent,
+    name: string,
+    small: boolean = false
+  ) => {
+    const imgElement = e.currentTarget as HTMLImageElement;
+    renderFallbackInitial(imgElement, name, small);
+  };
+
   return (
     <div className="w-full space-y-6">
       <div ref={resultRef} className="result-container">
@@ -409,39 +445,7 @@ export function Result({
                   className="avatar-image w-full h-full object-cover"
                   width={250}
                   height={250}
-                  onError={(e) => {
-                    // @ts-ignore - Next.js Image에서 onError 처리 방식 변경
-                    e.currentTarget.onerror = null;
-                    // @ts-ignore
-                    e.currentTarget.src = ""; // 에러 시 빈 이미지로
-                    // @ts-ignore
-                    e.currentTarget.style.background = `var(--accent)`;
-                    // @ts-ignore
-                    e.currentTarget.style.display = "flex";
-                    // @ts-ignore
-                    e.currentTarget.style.alignItems = "center";
-                    // @ts-ignore
-                    e.currentTarget.style.justifyContent = "center";
-                    // @ts-ignore
-                    e.currentTarget.setAttribute(
-                      "data-content",
-                      characterName.charAt(0)
-                    );
-
-                    // 첫 글자를 보여주는 가상 요소 생성
-                    // @ts-ignore
-                    const textNode = document.createTextNode(
-                      characterName.charAt(0)
-                    );
-                    // @ts-ignore
-                    e.currentTarget.appendChild(textNode);
-                    // @ts-ignore
-                    e.currentTarget.style.fontSize = "2.5rem";
-                    // @ts-ignore
-                    e.currentTarget.style.color = "white";
-                    // @ts-ignore
-                    e.currentTarget.style.fontWeight = "bold";
-                  }}
+                  onError={(e) => handleImageError(e, characterName)}
                 />
               ) : (
                 <div className="avatar-fallback">{characterName.charAt(0)}</div>
@@ -462,7 +466,7 @@ export function Result({
               {typeof character === "object" && character.personalityMatch
                 ? character.personalityMatch
                 : `당신은 ${characterName}와(과) 비슷한 성향을 가지고 있습니다. 
-                   문제 해결 방식과 가치관에서 많은 공통점이 있습니다.`}
+                  문제 해결 방식과 가치관에서 많은 공통점이 있습니다.`}
             </div>
 
             {/* 캐릭터 기본 설명 */}
@@ -529,26 +533,7 @@ export function Result({
                         className="w-full h-full object-cover"
                         width={80}
                         height={80}
-                        onError={(e) => {
-                          // @ts-ignore
-                          e.currentTarget.onerror = null;
-                          // @ts-ignore
-                          e.currentTarget.style.display = "flex";
-                          // @ts-ignore
-                          e.currentTarget.style.alignItems = "center";
-                          // @ts-ignore
-                          e.currentTarget.style.justifyContent = "center";
-                          // @ts-ignore
-                          e.currentTarget.style.background = `var(--accent)`;
-                          // @ts-ignore
-                          e.currentTarget.style.color = "white";
-                          // @ts-ignore
-                          e.currentTarget.style.fontSize = "1.5rem";
-                          // @ts-ignore
-                          e.currentTarget.style.fontWeight = "bold";
-                          // @ts-ignore
-                          e.currentTarget.textContent = compatChar.charAt(0);
-                        }}
+                        onError={(e) => handleImageError(e, compatChar, true)}
                       />
                     </div>
                     <span className="text-sm text-center font-normal">
@@ -581,26 +566,7 @@ export function Result({
                     className="w-full h-full object-cover"
                     width={80}
                     height={80}
-                    onError={(e) => {
-                      // @ts-ignore
-                      e.currentTarget.onerror = null;
-                      // @ts-ignore
-                      e.currentTarget.style.display = "flex";
-                      // @ts-ignore
-                      e.currentTarget.style.alignItems = "center";
-                      // @ts-ignore
-                      e.currentTarget.style.justifyContent = "center";
-                      // @ts-ignore
-                      e.currentTarget.style.background = `var(--accent)`;
-                      // @ts-ignore
-                      e.currentTarget.style.color = "white";
-                      // @ts-ignore
-                      e.currentTarget.style.fontSize = "1.5rem";
-                      // @ts-ignore
-                      e.currentTarget.style.fontWeight = "bold";
-                      // @ts-ignore
-                      e.currentTarget.textContent = incompatible.charAt(0);
-                    }}
+                    onError={(e) => handleImageError(e, incompatible, true)}
                   />
                 </div>
                 <div>
