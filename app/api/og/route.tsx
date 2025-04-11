@@ -58,17 +58,20 @@ export async function GET(request: NextRequest) {
     console.log("Protocol:", protocol);
     console.log("Character param:", character);
     console.log("Decoded character name:", characterName);
-    console.log(
-      "Has image mapping:",
-      characterName && characterImageMap[characterName] ? "Yes" : "No"
-    );
 
-    // 이미지 URL 결정
-    let imagePath = DEFAULT_OG_IMAGE; // 기본 이미지로 DEFAULT_OG_IMAGE 상수 사용
+    // 이미지 URL 결정 - 기본적으로 DEFAULT_OG_IMAGE 사용
+    let imagePath = DEFAULT_OG_IMAGE;
+    let title = "진격의 거인 캐릭터 테스트";
+    let subtitle = "당신은 어떤 캐릭터와 닮았을까요?";
+    // DEFAULT_OG_IMAGE 사용 여부 플래그
+    let isDefault = true;
 
     // character 파라미터가 있고 characterImageMap에 매핑된 이미지가 있는 경우에만 캐릭터 이미지 사용
     if (character && characterName && characterImageMap[characterName]) {
       imagePath = characterImageMap[characterName];
+      title = characterName;
+      subtitle = "진격의 거인 캐릭터 테스트 결과";
+      isDefault = false;
     }
 
     const imageUrl = `${protocol}${host}${imagePath}`;
@@ -103,51 +106,53 @@ export async function GET(request: NextRequest) {
               backgroundImage: `url(${imageUrl})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              filter: "brightness(0.7)",
-              opacity: 0.8,
+              filter: isDefault ? "none" : "brightness(0.7)",
+              opacity: isDefault ? 1 : 0.8,
             }}
           />
 
-          {/* 캐릭터 이름 */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 60,
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: 60,
-              fontWeight: "bold",
-              textAlign: "center",
-              padding: "20px 40px",
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
-              borderRadius: 20,
-              maxWidth: "80%",
-              zIndex: 10,
-            }}
-          >
-            {characterName || "진격의 거인 캐릭터 테스트"}
-          </div>
+          {/* 타이틀 - 기본 이미지가 아닐 때만 표시 */}
+          {!isDefault && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: 60,
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontSize: 60,
+                fontWeight: "bold",
+                textAlign: "center",
+                padding: "20px 40px",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                borderRadius: 20,
+                maxWidth: "80%",
+                zIndex: 10,
+              }}
+            >
+              {title}
+            </div>
+          )}
 
-          {/* 사이트 제목 */}
-          <div
-            style={{
-              position: "absolute",
-              top: 60,
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: 40,
-              fontWeight: "bold",
-              textAlign: "center",
-              padding: "20px 40px",
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
-              borderRadius: 20,
-              zIndex: 10,
-            }}
-          >
-            진격의 거인 캐릭터 테스트
-          </div>
-
-          {/* 로고나 추가 정보가 필요하면 여기에 추가 */}
+          {/* 서브타이틀 - 기본 이미지가 아닐 때만 표시 */}
+          {!isDefault && (
+            <div
+              style={{
+                position: "absolute",
+                top: 60,
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontSize: 40,
+                fontWeight: "bold",
+                textAlign: "center",
+                padding: "20px 40px",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                borderRadius: 20,
+                zIndex: 10,
+              }}
+            >
+              {subtitle}
+            </div>
+          )}
         </div>
       ),
       {
