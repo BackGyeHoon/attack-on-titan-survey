@@ -39,6 +39,7 @@ export function Question({
   const [quote, setQuote] = useState<string>("");
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   // 컴포넌트가 마운트된 후에만 랜덤 명언 선택
   useEffect(() => {
@@ -47,49 +48,89 @@ export function Question({
     const index = questionIndex ?? (questionNumber ? questionNumber - 1 : 0);
     const quoteIndex = (index + randomOffset) % famousQuotes.length;
     setQuote(famousQuotes[quoteIndex]);
+
+    // 이전 선택 초기화
+    setSelectedOption(null);
+    setIsProcessing(false);
   }, [questionIndex, questionNumber]);
 
-  // 중복 클릭 방지 및 이벤트 처리 최적화
-  const handleAnswerClick = (e: React.MouseEvent, option: string) => {
-    e.preventDefault();
-    
-    // 이미 처리 중이면 중복 실행 방지
+  // 터치 디바이스를 위한 즉시 제출 버전 핸들러
+  const handleImmediateSubmit = (option: string) => {
     if (isProcessing) return;
-    
+
     setIsProcessing(true);
-    
-    // 답변 처리
+    setSelectedOption(option);
+
+    // 즉시 답변 제출
     onAnswer(option);
-    
-    // 일정 시간 후 처리 상태 초기화 (다음 질문에서 다시 클릭 가능하도록)
+
+    // 일정 시간 후 처리 상태 초기화
     setTimeout(() => {
       setIsProcessing(false);
     }, 500);
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="titan-header text-xl font-bold">{question}</h2>
+    <div className="space-y-4 px-2 py-4 sm:space-y-6 sm:p-0">
+      <h2 className="titan-header text-lg sm:text-xl font-bold leading-tight">
+        {question}
+      </h2>
 
       <div className="space-y-3">
         {options.map((option, index) => (
           <button
             key={index}
-            className={`titan-button w-full text-left p-3 rounded-md flex items-center hover:bg-opacity-90 transition-all ${
-              isProcessing ? "opacity-70 pointer-events-none" : ""
-            }`}
-            onClick={(e) => handleAnswerClick(e, option)}
+            className={`w-full text-left p-3 rounded-lg flex items-center transition-all ${
+              selectedOption === option
+                ? "bg-primary text-white font-medium"
+                : "titan-button"
+            } ${isProcessing ? "opacity-70 pointer-events-none" : ""}`}
+            onClick={() => handleImmediateSubmit(option)}
+            onTouchEnd={(e) => {
+              e.preventDefault(); // 기본 터치 이벤트 방지
+              handleImmediateSubmit(option);
+            }}
             disabled={isProcessing}
           >
-            <div className="mr-3 w-7 h-7 flex items-center justify-center rounded-full border-2 border-accent text-accent font-bold">
+            <div
+              className={`mr-3 w-7 h-7 flex items-center justify-center rounded-full border-2 ${
+                selectedOption === option
+                  ? "border-white text-white"
+                  : "border-accent text-accent"
+              } font-bold`}
+            >
               {index + 1}
             </div>
-            <span>{option}</span>
+            <span className="text-sm sm:text-base">{option}</span>
           </button>
         ))}
       </div>
 
-      <div className="mt-8 text-xs text-muted italic text-center p-4 bg-primary-light bg-opacity-30 rounded-md">
+      {/* 모바일용 확인 버튼 (선택된 옵션이 있고 처리 중이 아닐 때만 표시) */}
+      {selectedOption && !isProcessing && (
+        <button
+          className="w-full p-3 bg-primary text-white font-bold rounded-lg mt-4 flex justify-center items-center"
+          onClick={() => handleImmediateSubmit(selectedOption)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mr-2"
+          >
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          선택 확인
+        </button>
+      )}
+
+      <div className="mt-6 text-xs text-muted italic text-center p-4 bg-primary-light bg-opacity-30 rounded-md">
         &ldquo;{mounted ? quote : "저기 바깥 세계에는 자유가 있다."}&rdquo;
       </div>
     </div>

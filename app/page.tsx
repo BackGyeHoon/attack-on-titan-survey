@@ -251,76 +251,49 @@ const characters: Character[] = [
 export default function Home() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [result, setResult] = useState<Character | null>(null);
+  const [result, setResult] = useState<(typeof characters)[0] | null>(null);
 
-  // URL 쿼리 파라미터로부터 결과 복원
+  // 브라우저 환경에서만 실행되도록 useEffect 사용
   useEffect(() => {
-    // URL에서 쿼리 파라미터 확인
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      const charParam = url.searchParams.get('char');
-      
-      // 캐릭터 파라미터가 있으면 해당 캐릭터의 결과 화면 표시
-      if (charParam) {
-        // characters 배열에서 해당 캐릭터 찾기
-        const foundCharacter = characters.find(char => char.name === charParam);
-        
-        if (foundCharacter) {
-          // 결과 처리를 위해 determineCharacter 함수의 로직 일부 활용
-          
-          // 잘 맞는 캐릭터와 안 맞는 캐릭터 찾기 (실제 로직은 간소화)
-          const otherCharacters = characters
-            .filter(char => char.name !== charParam)
-            .map(char => char.name);
-          
-          // 잘 맞는 캐릭터 (간단하게 첫 2개 선택)
-          const compatibleChars = otherCharacters.slice(0, 2);
-          
-          // 안 맞는 캐릭터 (간단하게 마지막 선택)
-          const incompatibleChar = otherCharacters[otherCharacters.length - 1];
-          
-          // 결과 객체 생성
-          const sharedResult: Character = {
-            ...foundCharacter,
-            compatibleCharacters: compatibleChars,
-            incompatibleCharacter: incompatibleChar
-          };
-          
-          // 결과 설정
-          setResult(sharedResult);
-        }
-      }
-    }
-  }, []);
+    // 페이지 로드 시 스크롤을 맨 위로 이동
+    window.scrollTo(0, 0);
+  }, [currentQuestion, result]);
 
   // 문제 진행 상태에 따른 body 클래스 업데이트
   useEffect(() => {
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       // 모든 progress 클래스 제거
-      document.body.classList.remove('progress-0', 'progress-20', 'progress-40', 'progress-60', 'progress-80', 'progress-100');
-      
+      document.body.classList.remove(
+        "progress-0",
+        "progress-20",
+        "progress-40",
+        "progress-60",
+        "progress-80",
+        "progress-100"
+      );
+
       // 결과 화면인 경우 progress-100 적용
       if (result) {
-        document.body.classList.add('progress-100');
+        document.body.classList.add("progress-100");
       } else {
         // 진행도에 따른 클래스 적용
         const progressPercentage = (currentQuestion / questions.length) * 100;
         if (progressPercentage === 0) {
-          document.body.classList.add('progress-0');
+          document.body.classList.add("progress-0");
         } else if (progressPercentage <= 20) {
-          document.body.classList.add('progress-20');
+          document.body.classList.add("progress-20");
         } else if (progressPercentage <= 40) {
-          document.body.classList.add('progress-40');
+          document.body.classList.add("progress-40");
         } else if (progressPercentage <= 60) {
-          document.body.classList.add('progress-60');
+          document.body.classList.add("progress-60");
         } else if (progressPercentage <= 80) {
-          document.body.classList.add('progress-80');
+          document.body.classList.add("progress-80");
         } else {
-          document.body.classList.add('progress-100');
+          document.body.classList.add("progress-100");
         }
       }
     }
-  }, [currentQuestion, result, questions.length]);
+  }, [currentQuestion, result]);
 
   const handleAnswer = (answer: string) => {
     const newAnswers = [...answers, answer];
@@ -348,21 +321,30 @@ export default function Home() {
 
     // 각 질문별 응답에 따른 점수 할당
     // 질문 1: 갈등 상황에 대한 반응
-    if (userAnswers[0] === "상황을 자세히 물어보고 실질적인 해결책을 함께 찾는다") {
+    if (
+      userAnswers[0] === "상황을 자세히 물어보고 실질적인 해결책을 함께 찾는다"
+    ) {
       scores["아르민 알레르트"] += 2;
       scores["엘빈 스미스"] += 1;
       scores["한지 조에"] += 1;
       scores["장 키르슈타인"] += 1;
-    } else if (userAnswers[0] === "즉시 달려가서 친구 편에서 직접 상황에 개입한다") {
+    } else if (
+      userAnswers[0] === "즉시 달려가서 친구 편에서 직접 상황에 개입한다"
+    ) {
       scores["에렌 예거"] += 2;
       scores["미카사 아커만"] += 2;
       scores["가비 브라운"] += 1;
-    } else if (userAnswers[0] === "어떤 판단도 하지 않고 친구의 감정을 이해하고 공감한다") {
+    } else if (
+      userAnswers[0] === "어떤 판단도 하지 않고 친구의 감정을 이해하고 공감한다"
+    ) {
       scores["미카사 아커만"] += 1;
       scores["히스토리아 레이스"] += 2;
       scores["팔코 그라이스"] += 2;
       scores["사샤 블라우스"] += 1;
-    } else if (userAnswers[0] === "객관적인 시각으로 상황을 분석하고 논리적인 조언을 한다") {
+    } else if (
+      userAnswers[0] ===
+      "객관적인 시각으로 상황을 분석하고 논리적인 조언을 한다"
+    ) {
       scores["아르민 알레르트"] += 1;
       scores["지크 예거"] += 3;
       scores["피크 핑거"] += 1;
@@ -370,21 +352,29 @@ export default function Home() {
     }
 
     // 질문 2: 팀 프로젝트 역할
-    if (userAnswers[1] === "새로운 아이디어를 제시하고 방향성을 설계하는 기획자") {
+    if (
+      userAnswers[1] === "새로운 아이디어를 제시하고 방향성을 설계하는 기획자"
+    ) {
       scores["아르민 알레르트"] += 3;
       scores["한지 조에"] += 2;
       scores["지크 예거"] += 1;
-    } else if (userAnswers[1] === "목표를 설정하고 팀을 이끄는 결단력 있는 리더") {
+    } else if (
+      userAnswers[1] === "목표를 설정하고 팀을 이끄는 결단력 있는 리더"
+    ) {
       scores["에렌 예거"] += 2;
       scores["엘빈 스미스"] += 3;
       scores["리바이 아커만"] += 2;
       scores["프록 폴스타"] += 1;
-    } else if (userAnswers[1] === "갈등을 중재하고 모두의 의견을 조율하는 중재자") {
+    } else if (
+      userAnswers[1] === "갈등을 중재하고 모두의 의견을 조율하는 중재자"
+    ) {
       scores["히스토리아 레이스"] += 2;
       scores["마르코 보트"] += 3;
       scores["팔코 그라이스"] += 2;
       scores["도트 픽시스"] += 1;
-    } else if (userAnswers[1] === "주어진 일을 묵묵히 완수하고 실무를 담당하는 실행자") {
+    } else if (
+      userAnswers[1] === "주어진 일을 묵묵히 완수하고 실무를 담당하는 실행자"
+    ) {
       scores["미카사 아커만"] += 2;
       scores["베르톨트 후버"] += 2;
       scores["피크 핑거"] += 3;
@@ -392,27 +382,39 @@ export default function Home() {
     }
 
     // 질문 3: 주말 활동
-    if (userAnswers[2] === "아무도 가보지 않은 곳을 탐험하거나 스릴 넘치는 활동을 즐긴다") {
+    if (
+      userAnswers[2] ===
+      "아무도 가보지 않은 곳을 탐험하거나 스릴 넘치는 활동을 즐긴다"
+    ) {
       scores["에렌 예거"] += 3;
       scores["한지 조에"] += 2;
       scores["코니 스프링거"] += 1;
-    } else if (userAnswers[2] === "사회를 위한 봉사활동이나 의미 있는 프로젝트에 참여한다") {
+    } else if (
+      userAnswers[2] ===
+      "사회를 위한 봉사활동이나 의미 있는 프로젝트에 참여한다"
+    ) {
       scores["엘빈 스미스"] += 2;
       scores["히스토리아 레이스"] += 2;
       scores["그리샤 예거"] += 2;
-    } else if (userAnswers[2] === "가족이나 친한 친구들과 함께 대화하며 시간을 보낸다") {
+    } else if (
+      userAnswers[2] === "가족이나 친한 친구들과 함께 대화하며 시간을 보낸다"
+    ) {
       scores["미카사 아커만"] += 2;
       scores["코니 스프링거"] += 2;
       scores["사샤 블라우스"] += 3;
       scores["카를라 예거"] += 3;
-    } else if (userAnswers[2] === "책읽기, 그림그리기 등 혼자서 조용히 취미활동을 즐긴다") {
+    } else if (
+      userAnswers[2] === "책읽기, 그림그리기 등 혼자서 조용히 취미활동을 즐긴다"
+    ) {
       scores["아르민 알레르트"] += 2;
       scores["애니 레온하트"] += 3;
       scores["리바이 아커만"] += 1;
     }
 
     // 질문 4: 첫인상
-    if (userAnswers[3] === "누구나 따르고 싶은 리더십이 있는 카리스마 있는 사람") {
+    if (
+      userAnswers[3] === "누구나 따르고 싶은 리더십이 있는 카리스마 있는 사람"
+    ) {
       scores["엘빈 스미스"] += 3;
       scores["리바이 아커만"] += 2;
       scores["프록 폴스타"] += 1;
@@ -424,12 +426,16 @@ export default function Home() {
       scores["아르민 알레르트"] += 3;
       scores["한지 조에"] += 2;
       scores["도트 픽시스"] += 1;
-    } else if (userAnswers[3] === "긍정적이고 활기찬 에너지가 넘치는 활발한 사람") {
+    } else if (
+      userAnswers[3] === "긍정적이고 활기찬 에너지가 넘치는 활발한 사람"
+    ) {
       scores["에렌 예거"] += 2;
       scores["사샤 블라우스"] += 3;
       scores["코니 스프링거"] += 2;
       scores["가비 브라운"] += 1;
-    } else if (userAnswers[3] === "침착하고 계산적이며 상황을 냉정하게 보는 사람") {
+    } else if (
+      userAnswers[3] === "침착하고 계산적이며 상황을 냉정하게 보는 사람"
+    ) {
       scores["지크 예거"] += 3;
       scores["애니 레온하트"] += 2;
       scores["피크 핑거"] += 2;
@@ -440,19 +446,27 @@ export default function Home() {
       scores["아르민 알레르트"] += 3;
       scores["지크 예거"] += 2;
       scores["피크 핑거"] += 2;
-    } else if (userAnswers[4] === "마음이 끌리는 방향과 직감을 가장 중요하게 생각한다") {
+    } else if (
+      userAnswers[4] === "마음이 끌리는 방향과 직감을 가장 중요하게 생각한다"
+    ) {
       scores["에렌 예거"] += 3;
       scores["사샤 블라우스"] += 2;
       scores["유미르"] += 1;
-    } else if (userAnswers[4] === "신뢰하는 주변 사람들에게 의견을 구하고 참고한다") {
+    } else if (
+      userAnswers[4] === "신뢰하는 주변 사람들에게 의견을 구하고 참고한다"
+    ) {
       scores["히스토리아 레이스"] += 3;
       scores["팔코 그라이스"] += 2;
       scores["베르톨트 후버"] += 1;
-    } else if (userAnswers[4] === "과거에 비슷한 상황에서 어떤 결과가 있었는지 참고한다") {
+    } else if (
+      userAnswers[4] === "과거에 비슷한 상황에서 어떤 결과가 있었는지 참고한다"
+    ) {
       scores["리바이 아커만"] += 2;
       scores["케니 아커만"] += 3;
       scores["도트 픽시스"] += 2;
-    } else if (userAnswers[4] === "궁극적인 목표 달성에 어떤 선택이 더 유리한지 고려한다") {
+    } else if (
+      userAnswers[4] === "궁극적인 목표 달성에 어떤 선택이 더 유리한지 고려한다"
+    ) {
       scores["엘빈 스미스"] += 3;
       scores["지크 예거"] += 2;
       scores["그리샤 예거"] += 1;
@@ -463,11 +477,16 @@ export default function Home() {
       scores["미카사 아커만"] += 3;
       scores["카를라 예거"] += 2;
       scores["히스토리아 레이스"] += 1;
-    } else if (userAnswers[5] === "자신의 삶에 대한 통제권을 잃고 선택의 자유를 빼앗기는 것") {
+    } else if (
+      userAnswers[5] ===
+      "자신의 삶에 대한 통제권을 잃고 선택의 자유를 빼앗기는 것"
+    ) {
       scores["에렌 예거"] += 3;
       scores["유미르"] += 2;
       scores["리바이 아커만"] += 1;
-    } else if (userAnswers[5] === "오랫동안 준비하고 노력한 일에서 실패하는 것") {
+    } else if (
+      userAnswers[5] === "오랫동안 준비하고 노력한 일에서 실패하는 것"
+    ) {
       scores["엘빈 스미스"] += 2;
       scores["라이너 브라운"] += 3;
       scores["가비 브라운"] += 2;
@@ -480,14 +499,16 @@ export default function Home() {
       scores["포르코 갤리아드"] += 2;
       scores["장 키르슈타인"] += 2;
     }
-    
+
     // 질문 7: 스트레스 대처 방식
     if (userAnswers[6] === "문제의 원인을 분석하고 해결책을 찾아 실행한다") {
       scores["아르민 알레르트"] += 3;
       scores["엘빈 스미스"] += 2;
       scores["피크 핑거"] += 2;
       scores["한지 조에"] += 1;
-    } else if (userAnswers[6] === "격렬한 운동이나 활동으로 에너지를 발산한다") {
+    } else if (
+      userAnswers[6] === "격렬한 운동이나 활동으로 에너지를 발산한다"
+    ) {
       scores["에렌 예거"] += 2;
       scores["미카사 아커만"] += 2;
       scores["리바이 아커만"] += 3;
@@ -502,41 +523,57 @@ export default function Home() {
       scores["지크 예거"] += 2;
       scores["베르톨트 후버"] += 2;
       scores["유미르"] += 1;
-    } else if (userAnswers[6] === "일상에서 벗어나 새로운 경험을 통해 기분 전환한다") {
+    } else if (
+      userAnswers[6] === "일상에서 벗어나 새로운 경험을 통해 기분 전환한다"
+    ) {
       scores["한지 조에"] += 3;
       scores["코니 스프링거"] += 2;
       scores["사샤 블라우스"] += 2;
       scores["장 키르슈타인"] += 1;
     }
-    
+
     // 질문 8:, 이상적인 리더상
-    if (userAnswers[7] === "명확한 비전을 제시하고 대담한 결정을 내리는 카리스마적 리더") {
+    if (
+      userAnswers[7] ===
+      "명확한 비전을 제시하고 대담한 결정을 내리는 카리스마적 리더"
+    ) {
       scores["에렌 예거"] += 2;
       scores["엘빈 스미스"] += 3;
       scores["프록 폴스타"] += 2;
       scores["지크 예거"] += 1;
-    } else if (userAnswers[7] === "구성원들의 성장을 돕고 팀워크를 중시하는 섬김의 리더") {
+    } else if (
+      userAnswers[7] === "구성원들의 성장을 돕고 팀워크를 중시하는 섬김의 리더"
+    ) {
       scores["히스토리아 레이스"] += 3;
       scores["마르코 보트"] += 2;
       scores["팔코 그라이스"] += 2;
       scores["그리샤 예거"] += 1;
-    } else if (userAnswers[7] === "논리적 분석과 전략적 사고로 최적의 방향을 찾는 지적인 리더") {
+    } else if (
+      userAnswers[7] ===
+      "논리적 분석과 전략적 사고로 최적의 방향을 찾는 지적인 리더"
+    ) {
       scores["아르민 알레르트"] += 3;
       scores["지크 예거"] += 2;
       scores["한지 조에"] += 2;
       scores["피크 핑거"] += 1;
-    } else if (userAnswers[7] === "솔선수범하며, 원칙과 책임감, 정의를 중시하는 모범적 리더") {
+    } else if (
+      userAnswers[7] ===
+      "솔선수범하며, 원칙과 책임감, 정의를 중시하는 모범적 리더"
+    ) {
       scores["리바이 아커만"] += 3;
       scores["미카사 아커만"] += 2;
       scores["도트 픽시스"] += 2;
       scores["엘빈 스미스"] += 1;
-    } else if (userAnswers[7] === "변화와 혁신을 두려워하지 않고 새로운 길을 개척하는 도전적 리더") {
+    } else if (
+      userAnswers[7] ===
+      "변화와 혁신을 두려워하지 않고 새로운 길을 개척하는 도전적 리더"
+    ) {
       scores["에렌 예거"] += 3;
       scores["한지 조에"] += 2;
-      scores ["가비 브라운"] += 2;
+      scores["가비 브라운"] += 2;
       scores["엘빈 스미스"] += 1;
     }
-    
+
     // 질문 9: 중요한 가치
     if (userAnswers[8] === "자유와 독립성") {
       scores["에렌 예거"] += 3;
@@ -564,7 +601,7 @@ export default function Home() {
       scores["마르코 보트"] += 2;
       scores["팔코 그라이스"] += 1;
     }
-    
+
     // 질문 10: 새로운 도전에 대한 태도
     if (userAnswers[9] === "새로운 가능성에 흥분하며 적극적으로 도전한다") {
       scores["에렌 예거"] += 3;
@@ -576,17 +613,24 @@ export default function Home() {
       scores["피크 핑거"] += 2;
       scores["아르민 알레르트"] += 2;
       scores["도트 픽시스"] += 1;
-    } else if (userAnswers[9] === "경험 많은 사람들의 조언을 구하고 신중하게 접근한다") {
+    } else if (
+      userAnswers[9] === "경험 많은 사람들의 조언을 구하고 신중하게 접근한다"
+    ) {
       scores["팔코 그라이스"] += 3;
       scores["베르톨트 후버"] += 2;
       scores["마르코 보트"] += 2;
       scores["히스토리아 레이스"] += 1;
-    } else if (userAnswers[9] === "자신의 직관과 능력을 믿고 상황에 맞게 유연하게 대응한다") {
+    } else if (
+      userAnswers[9] ===
+      "자신의 직관과 능력을 믿고 상황에 맞게 유연하게 대응한다"
+    ) {
       scores["리바이 아커만"] += 3;
       scores["미카사 아커만"] += 2;
       scores["장 키르슈타인"] += 2;
       scores["사샤 블라우스"] += 1;
-    } else if (userAnswers[9] === "기존의 경험과 지식을 바탕으로 체계적으로 접근한다") {
+    } else if (
+      userAnswers[9] === "기존의 경험과 지식을 바탕으로 체계적으로 접근한다"
+    ) {
       scores["엘빈 스미스"] += 3;
       scores["아르민 알레르트"] += 2;
       scores["라이너 브라운"] += 2;
@@ -627,22 +671,25 @@ export default function Home() {
     let lowestScoringCharacters = sortedScores
       .filter(([, score]) => score === lowestScore)
       .map(([name]) => name);
-    
+
     // 캐릭터 점수 분산을 위해 lowestScore+1 점수를 가진 캐릭터들도 포함
     if (lowestScoringCharacters.length < 3 && sortedScores.length > 5) {
       const secondLowestScore = sortedScores
         .filter(([, score]) => score > lowestScore)
         .pop()?.[1];
-      
+
       if (secondLowestScore) {
         const moreCharacters = sortedScores
           .filter(([, score]) => score === secondLowestScore)
           .map(([name]) => name);
-        
-        lowestScoringCharacters = [...lowestScoringCharacters, ...moreCharacters];
+
+        lowestScoringCharacters = [
+          ...lowestScoringCharacters,
+          ...moreCharacters,
+        ];
       }
     }
-    
+
     // 항상 동일한 결과를 위해 이름순 정렬 후 첫 번째 선택
     lowestScoringCharacters.sort();
     const incompatibleCharacter = lowestScoringCharacters[0];
@@ -659,42 +706,42 @@ export default function Home() {
     };
   };
 
+  // 결과 리셋 및 다시 시작
   const resetSurvey = () => {
     setCurrentQuestion(0);
     setAnswers([]);
     setResult(null);
   };
 
+  // 진행 상태 계산
   const progressPercentage = (currentQuestion / questions.length) * 100;
 
   return (
-    <main className="min-h-screen flex flex-col items-center p-4 relative">
-      {/* 벽 균열 효과 추가 */}
-      <div className="wall-crack crack-1"></div>
-      <div className="wall-crack crack-2"></div>
-      <div className="wall-crack crack-3"></div>
-      <div className="wall-crack crack-4"></div>
-      <div className="wall-crack crack-5"></div>
-
-      <div id="survey-container" className="content-container w-full max-w-3xl mx-auto">
-        {result ? (
-          <Result 
-            character={result.name}
-            description={result.description}
-            compatibleCharacters={result.compatibleCharacters}
-            incompatibleCharacter={result.incompatibleCharacter}
-            onReset={resetSurvey}
-          />
-        ) : (
-          <>
-            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-accent">진격의 거인 성격 테스트</h1>
-            <div className="progress-bar mb-8">
-              <div 
+    <main className="min-h-screen pb-12">
+      <div className="soft-card p-4 md:p-8 mx-3 sm:mx-auto my-4 sm:my-8 relative max-w-3xl">
+        {/* 모바일에서도 보기 좋은 진행 표시줄 */}
+        {!result && (
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-muted">
+                질문 {currentQuestion + 1} / {questions.length}
+              </span>
+              <span className="text-sm text-muted">
+                {progressPercentage.toFixed(0)}% 완료
+              </span>
+            </div>
+            <div className="progress-bar">
+              <div
                 className="progress-fill"
                 style={{ width: `${progressPercentage}%` }}
-              ></div>
+              />
             </div>
-            
+          </div>
+        )}
+
+        {/* 시작 화면 및 질문 */}
+        {!result && (
+          <div className="question-container">
             <Question
               question={questions[currentQuestion].text}
               options={questions[currentQuestion].options}
@@ -702,8 +749,11 @@ export default function Home() {
               questionIndex={currentQuestion}
               questionNumber={currentQuestion + 1}
             />
-          </>
+          </div>
         )}
+
+        {/* 결과 화면 */}
+        {result && <Result character={result} onReset={resetSurvey} />}
       </div>
     </main>
   );

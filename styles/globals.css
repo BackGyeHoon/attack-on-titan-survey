@@ -6,70 +6,50 @@
 @tailwind utilities;
 
 :root {
-  /* 기본 색상 (벽 색상) */
-  --wall-color-light: #e2e1d9;
-  --wall-color-dark: #c8c6b8;
-  --wall-color-shadow: #a3a195;
-  --wall-shadow: rgba(0, 0, 0, 0.3);
-  
-  --background-start: #c8c6b8;
-  --background-end: #74bdff;
-  --background: var(--background-start);
-  --card-bg: rgba(230, 228, 220, 0.9);
-  --foreground: #333;
-  --primary: #786450;
-  --primary-light: #e0ddd2;
+  /* 기본 색상 */
+  --background: #1a1a1a;
+  --card-bg: rgba(30, 30, 30, 0.7);
+  --foreground: #f8e8d8;
+  --primary: #ff7a5c;
+  --primary-light: rgba(58, 42, 39, 0.7);
   --secondary: #8b939e;
-  --accent: #5e5544;
-  --muted: #786450;
-  --border: #c0beb2;
-  --shadow-color: rgba(0, 0, 0, 0.2);
-  --shadow-highlight: rgba(255, 255, 255, 0.1);
+  --accent: #ff9c6b;
+  --muted: #b3a49e;
+  --border: #473630;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-highlight: rgba(255, 255, 255, 0.05);
   --font-title: "Black Han Sans", sans-serif;
   --font-body: "Nanum Gothic", sans-serif;
-  
-  /* 벽 텍스처 관련 변수 */
-  --brick-color-1: var(--wall-color-light);
-  --brick-color-2: var(--wall-color-dark);
-  --brick-color-3: var(--wall-color-light);
-  --brick-color-4: var(--wall-color-dark);
-  --brick-gap: var(--wall-color-shadow);
-  --brick-crack: rgba(0, 0, 0, 0.5);
-  --wall-opacity: 1;
-  --brick-layer-1: 1;
-  --brick-layer-2: 1;
-  --brick-layer-3: 1;
-  --brick-layer-4: 1;
-  --brick-size: 80px;
-  
-  /* 무너짐 효과 변수 */
-  --wall-damage-1: 0%;
-  --wall-damage-2: 0%;
-  --wall-damage-3: 0%;
-  --wall-damage-4: 0%;
-  --wall-damage-5: 0%;
-  --sky-visibility: 0%;
-  --sky-color: #74bdff;
+
+  /* 표준 간격 */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+
+  /* 터치 타겟 크기 (모바일) */
+  --touch-target-size: 44px;
+
+  /* 응답형 디자인 */
+  --content-width-mobile: 100%;
+  --content-width-tablet: 540px;
+  --content-width-desktop: 720px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* 다크모드에서도 동일하게 적용 */
-    --wall-color-light: #d3d1c8;
-    --wall-color-dark: #b8b6a8;
-    --wall-color-shadow: #939185;
-    
-    --background-start: #b8b6a8;
-    --background-end: #5f97d2;
-    --background: var(--background-start);
-    --card-bg: rgba(210, 208, 200, 0.9);
-    --foreground: #333;
-    --primary: #786450;
-    --primary-light: #d0cdc2;
+    --background: #1a1a1a;
+    --card-bg: rgba(30, 30, 30, 0.7);
+    --foreground: #f8e8d8;
+    --primary: #ff7a5c;
+    --primary-light: rgba(58, 42, 39, 0.7);
     --secondary: #8b939e;
-    --accent: #5e5544;
-    --muted: #786450;
-    --border: #b0ae92;
+    --accent: #ff9c6b;
+    --muted: #b3a49e;
+    --border: #473630;
     --shadow-color: rgba(0, 0, 0, 0.3);
     --shadow-highlight: rgba(255, 255, 255, 0.05);
   }
@@ -84,6 +64,9 @@ body {
   padding: 0;
   min-height: 100vh;
   overflow-x: hidden;
+  background-image: linear-gradient(to bottom, #1a1a1a, #2c2c2c);
+  -webkit-tap-highlight-color: transparent; /* 모바일에서 탭 하이라이트 제거 */
+  touch-action: manipulation; /* 더블 탭 줌 방지 */
 }
 
 /* 벽 배경 효과 */
@@ -98,22 +81,22 @@ body::before {
   opacity: var(--wall-opacity);
   background-color: var(--brick-gap);
   background-image: 
-    /* 벽 줄무늬 효과 */
-    linear-gradient(90deg, 
-      var(--brick-color-1) calc(var(--brick-size) * 0.6), 
-      var(--brick-color-2) calc(var(--brick-size) * 0.6), 
-      var(--brick-color-2) calc(var(--brick-size) * 1.4), 
+    /* 벽 줄무늬 효과 */ linear-gradient(
+      90deg,
+      var(--brick-color-1) calc(var(--brick-size) * 0.6),
+      var(--brick-color-2) calc(var(--brick-size) * 0.6),
+      var(--brick-color-2) calc(var(--brick-size) * 1.4),
       var(--brick-color-1) calc(var(--brick-size) * 1.4)
     ),
     /* 가로 줄 효과 */
-    linear-gradient(0deg,
-      transparent calc(50% - 1px),
-      var(--wall-color-shadow) calc(50% - 1px),
-      var(--wall-color-shadow) calc(50% + 1px),
-      transparent calc(50% + 1px)
-    );
-  background-size: 
-    calc(var(--brick-size) * 2) 100%,
+      linear-gradient(
+        0deg,
+        transparent calc(50% - 1px),
+        var(--wall-color-shadow) calc(50% - 1px),
+        var(--wall-color-shadow) calc(50% + 1px),
+        transparent calc(50% + 1px)
+      );
+  background-size: calc(var(--brick-size) * 2) 100%,
     100% calc(var(--brick-size) * 2);
   background-position: 0 0;
   background-repeat: repeat;
@@ -310,74 +293,131 @@ body::after {
 .content-container {
   position: relative;
   z-index: 1;
-  max-width: 800px;
+  max-width: var(--content-width-desktop);
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-4);
   min-height: 100vh;
-  background-color: rgba(230, 228, 220, 0.85);
-  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 결과 페이지 스타일 */
-.result-container {
-  background-color: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px var(--shadow-color);
+@media (max-width: 640px) {
+  .content-container {
+    padding: var(--spacing-2);
+  }
+}
+
+/* 콘텐츠 컨테이너 안의 요소들에 배경 블러 효과 추가 */
+.titan-card,
+.question-container,
+.soft-card {
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px); /* Safari 지원 */
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 /* 진격의 거인 스타일 컴포넌트 */
-.titan-card {
+.titan-card,
+.soft-card {
   background: var(--card-bg);
   border-radius: 16px;
   box-shadow: 0px 8px 24px var(--shadow-color);
-  transition: all 0.3s ease, background-color 0.8s ease;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.titan-header {
+.soft-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 30, 0.7),
+    rgba(40, 40, 40, 0.7)
+  );
+}
+
+.titan-header,
+.soft-title {
   font-family: var(--font-title);
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--accent);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-.titan-button {
+.soft-title {
+  margin-bottom: var(--spacing-3);
+  line-height: 1.2;
+}
+
+.titan-button,
+.soft-button,
+.soft-button-primary {
   background: var(--primary-light);
   color: var(--foreground);
   font-weight: 500;
-  border: 1px solid var(--muted);
+  border: none;
   border-radius: 8px;
   padding: 0.75rem 1.5rem;
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  min-height: var(--touch-target-size); /* 모바일 터치 영역 확보 */
+  touch-action: manipulation; /* 더블 탭 이슈 방지 */
 }
 
-.titan-button:hover {
+.soft-button {
+  background: rgba(58, 42, 39, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.soft-button-primary {
+  background: var(--primary);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.titan-button:hover,
+.soft-button:hover,
+.soft-button-primary:hover {
   background: var(--primary);
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.titan-button:active {
+.titan-button:active,
+.soft-button:active,
+.soft-button-primary:active {
   transform: translateY(0);
+}
+
+/* 오래된 기기 또는 iOS에서 터치 이벤트 지원 개선 */
+@media (pointer: coarse) {
+  .titan-button,
+  .soft-button,
+  .soft-button-primary {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* 터치 피드백 */
+  .titan-button:active,
+  .soft-button:active,
+  .soft-button-primary:active {
+    opacity: 0.8;
+  }
 }
 
 /* 아바타 컨테이너 */
 .avatar-container {
-  width: 150px;
-  height: 150px;
   border-radius: 50%;
-  margin: 0 auto;
   overflow: hidden;
   border: 3px solid var(--accent);
   padding: 3px;
@@ -389,6 +429,18 @@ body::after {
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+}
+
+.avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
 }
 
 /* 특성 바 */
@@ -422,30 +474,6 @@ body::after {
   background: linear-gradient(90deg, #ffb347, #ffcc33);
 }
 
-/* 벽 파편 효과 */
-.wall-debris {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: #8b7b65;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 2;
-  animation: fallDebris 2s ease-in forwards;
-}
-
-@keyframes fallDebris {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
 /* 진행 상태 표시줄 */
 .progress-bar {
   width: 100%;
@@ -453,7 +481,7 @@ body::after {
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid var(--wall-color-shadow);
+  border: 1px solid var(--border);
 }
 
 .progress-fill {
@@ -464,23 +492,49 @@ body::after {
   box-shadow: 0 0 10px rgba(94, 85, 68, 0.5);
 }
 
-/* 균열 주변 빛 효과 */
-@keyframes lightFlicker {
-  0% { opacity: 0.7; }
-  25% { opacity: 0.8; }
-  50% { opacity: 0.9; }
-  75% { opacity: 0.8; }
-  100% { opacity: 0.7; }
+/* 질문 컨테이너 */
+.question-container {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: var(--spacing-4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.wall-crack::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: -20%;
-  width: 140%;
-  height: 140%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
-  z-index: -1;
-  animation: lightFlicker 3s infinite ease-in-out;
+@media (max-width: 640px) {
+  .question-container {
+    padding: var(--spacing-3);
+  }
+
+  .titan-header,
+  .soft-title {
+    font-size: 1.25rem;
+  }
+
+  .titan-button,
+  .soft-button,
+  .soft-button-primary {
+    padding: 0.6rem 1rem;
+  }
+}
+
+/* 모바일 최적화를 위한 추가 스타일 */
+@media (max-width: 480px) {
+  html {
+    font-size: 14px; /* 기본 폰트 크기 약간 줄임 */
+  }
+
+  .soft-card {
+    margin-left: var(--spacing-2);
+    margin-right: var(--spacing-2);
+  }
+
+  /* 버튼이 모바일에서 더 잘 보이도록 */
+  .titan-button,
+  .soft-button,
+  .soft-button-primary {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px; /* 터치 영역 확보 */
+    margin-bottom: var(--spacing-2);
+  }
 }
