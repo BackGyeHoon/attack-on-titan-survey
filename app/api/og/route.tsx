@@ -51,9 +51,7 @@ export async function GET(request: NextRequest) {
     const character = searchParams.get("char");
 
     // URL 디코딩 적용
-    const characterName = character
-      ? decodeURIComponent(character)
-      : "진격의 거인 캐릭터 테스트";
+    const characterName = character ? decodeURIComponent(character) : "";
 
     console.log("Request URL:", request.url);
     console.log("Host:", host);
@@ -68,7 +66,8 @@ export async function GET(request: NextRequest) {
     // 이미지 URL 결정
     let imagePath = DEFAULT_OG_IMAGE; // 기본 이미지로 DEFAULT_OG_IMAGE 상수 사용
 
-    if (character && characterImageMap[characterName]) {
+    // character 파라미터가 있고 characterImageMap에 매핑된 이미지가 있는 경우에만 캐릭터 이미지 사용
+    if (character && characterName && characterImageMap[characterName]) {
       imagePath = characterImageMap[characterName];
     }
 
@@ -126,7 +125,7 @@ export async function GET(request: NextRequest) {
               zIndex: 10,
             }}
           >
-            {characterName}
+            {characterName || "진격의 거인 캐릭터 테스트"}
           </div>
 
           {/* 사이트 제목 */}
