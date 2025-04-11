@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import html2canvas from "html2canvas";
 
 // Character 인터페이스 정의
 interface Character {
@@ -356,6 +357,10 @@ export function Result({
   const [randomQuote, setRandomQuote] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
+  const [isCapturing, setIsCapturing] = useState(false);
+
+  // 결과 컨테이너에 대한 ref 생성
+  const resultRef = useRef<HTMLDivElement>(null);
 
   // 캐릭터 이름 가져오기
   const characterName = getCharacterName(character);
@@ -421,6 +426,94 @@ export function Result({
     }
   };
 
+  // 결과 캡쳐 기능
+  const handleCapture = async () => {
+    if (!resultRef.current) return;
+
+    try {
+      setIsCapturing(true);
+
+      // 캡쳐 전 스타일 적용
+      const targetElement = resultRef.current;
+      // originalStyles 변수 제거 (사용하지 않음)
+      const originalBackground = targetElement.style.background;
+
+      // 캡쳐 대상에 임시 배경 스타일 적용
+      targetElement.style.background = "#1a1a1a";
+      targetElement.style.padding = "20px";
+      targetElement.style.borderRadius = "12px";
+
+      // html2canvas 설정
+      const canvas = await html2canvas(targetElement, {
+        allowTaint: true,
+        useCORS: true,
+        scale: 2, // 고해상도 이미지를 위해 스케일 2배
+        backgroundColor: "#1a1a1a",
+        logging: false,
+      });
+
+      // 원래 스타일로 복원
+      targetElement.style.background = originalBackground;
+
+      // 이미지 데이터 URL 가져오기
+      const imageData = canvas.toDataURL("image/png");
+
+      // 이미지를 클립보드에 복사하기
+      try {
+        // Canvas를 Blob으로 변환
+        const blobPromise = new Promise<Blob>((resolve) => {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            }
+          }, "image/png");
+        });
+
+        const blob = await blobPromise;
+
+        // ClipboardItem API 사용
+        if (navigator.clipboard && navigator.clipboard.write) {
+          const clipboardItem = new ClipboardItem({
+            "image/png": blob,
+          });
+          await navigator.clipboard.write([clipboardItem]);
+
+          // 클립보드에 복사 성공 메시지
+          setShareMessage(
+            "이미지가 클립보드에 복사되었습니다. 원하는 곳에 붙여넣기하여 공유하세요!"
+          );
+        } else {
+          // 구형 브라우저나 모바일에서는 다운로드 옵션 제공
+          const downloadLink = document.createElement("a");
+          downloadLink.href = imageData;
+          downloadLink.download = `${characterName}_결과.png`;
+          downloadLink.click();
+
+          setShareMessage(
+            "이미지가 다운로드되었습니다. 원하는 곳에 공유하세요!"
+          );
+        }
+      } catch (clipboardError) {
+        console.warn("클립보드 복사 실패, 다운로드로 대체:", clipboardError);
+        // 클립보드 API 지원되지 않거나 실패한 경우 다운로드로 대체
+        const downloadLink = document.createElement("a");
+        downloadLink.href = imageData;
+        downloadLink.download = `${characterName}_결과.png`;
+        downloadLink.click();
+
+        setShareMessage("이미지가 다운로드되었습니다. 원하는 곳에 공유하세요!");
+      }
+
+      setIsCapturing(false);
+      setShowModal(true);
+    } catch (error) {
+      console.error("이미지 캡쳐 중 오류 발생:", error);
+      setIsCapturing(false);
+      setShareMessage("이미지 캡쳐에 실패했습니다. 다시 시도해 주세요.");
+      setShowModal(true);
+    }
+  };
+
   // 모달 닫기
   const closeModal = () => {
     setShowModal(false);
@@ -429,170 +522,172 @@ export function Result({
 
   return (
     <div className="w-full space-y-6">
-      <div className="text-center mb-4">
-        <h2 className="soft-title text-xl sm:text-2xl md:text-3xl mb-3">
-          당신과 가장 닮은 캐릭터는
-        </h2>
-        <h1 className="soft-title text-2xl sm:text-3xl md:text-4xl text-primary">
-          {characterName}
-        </h1>
-      </div>
-
-      {/* 모바일 반응형 캐릭터 이미지와 정보 레이아웃 */}
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
-        <div className="w-full md:w-1/3 flex flex-col items-center">
-          <div className="avatar-container w-36 h-36 sm:w-48 sm:h-48 md:w-full md:max-w-[250px] md:h-auto aspect-square mb-4">
-            {image || getDefaultImage(characterName) ? (
-              <img
-                src={image || getDefaultImage(characterName) || ""}
-                alt={characterName}
-                className="avatar-image"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = ""; // 에러 시 빈 이미지로
-                  e.currentTarget.style.background = `var(--accent)`;
-                  e.currentTarget.style.display = "flex";
-                  e.currentTarget.style.alignItems = "center";
-                  e.currentTarget.style.justifyContent = "center";
-                  e.currentTarget.setAttribute(
-                    "data-content",
-                    characterName.charAt(0)
-                  );
-
-                  // 첫 글자를 보여주는 가상 요소 생성
-                  const textNode = document.createTextNode(
-                    characterName.charAt(0)
-                  );
-                  e.currentTarget.appendChild(textNode);
-                  e.currentTarget.style.fontSize = "2.5rem";
-                  e.currentTarget.style.color = "white";
-                  e.currentTarget.style.fontWeight = "bold";
-                }}
-              />
-            ) : (
-              <div className="avatar-fallback">{characterName.charAt(0)}</div>
-            )}
-          </div>
-
-          {/* 캐릭터 명언 (모바일에서는 이미지 아래에 표시) */}
-          {mounted && randomQuote && (
-            <div className="italic text-sm text-center text-muted mb-4 md:mb-0 p-4 rounded-md bg-primary-light bg-opacity-20">
-              &ldquo;{randomQuote}&rdquo;
-            </div>
-          )}
+      <div ref={resultRef} className="result-container">
+        <div className="text-center mb-4">
+          <h2 className="soft-title text-xl sm:text-2xl md:text-3xl mb-3">
+            당신과 가장 닮은 캐릭터는
+          </h2>
+          <h1 className="soft-title text-2xl sm:text-3xl md:text-4xl text-primary">
+            {characterName}
+          </h1>
         </div>
 
-        <div className="w-full md:w-2/3 space-y-4">
-          <p className="text-sm sm:text-base leading-relaxed mb-4">
-            {characterDesc}
-          </p>
-
-          {/* 캐릭터 특성 */}
-          <div className="space-y-3">
-            {getAttributes(characterName).map((attr, index) => (
-              <div key={index} className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>{attr.name}</span>
-                  <span>{attr.value}/10</span>
-                </div>
-                <div className="stat-bar-container">
-                  <div
-                    className={`stat-bar stat-bar-${attr.type}`}
-                    style={{ width: `${attr.value * 10}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 캐릭터 관계 정보 */}
-      <div className="space-y-6 mt-8">
-        <h3 className="soft-title text-lg sm:text-xl">캐릭터 관계</h3>
-
-        {/* 서로 잘 맞는 캐릭터들 */}
-        <div className="space-y-2">
-          <h4 className="text-base sm:text-lg font-medium text-accent">
-            잘 맞는 캐릭터
-          </h4>
-          <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
-            {compatibles.length > 0 ? (
-              compatibles.map((compatChar, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center p-2 bg-primary-light bg-opacity-20 rounded-lg"
-                >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent mb-2">
-                    <img
-                      src={getDefaultImage(compatChar) || ""}
-                      alt={compatChar}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.style.display = "flex";
-                        e.currentTarget.style.alignItems = "center";
-                        e.currentTarget.style.justifyContent = "center";
-                        e.currentTarget.style.background = `var(--accent)`;
-                        e.currentTarget.style.color = "white";
-                        e.currentTarget.style.fontSize = "1.5rem";
-                        e.currentTarget.style.fontWeight = "bold";
-                        e.currentTarget.textContent = compatChar.charAt(0);
-                      }}
-                    />
-                  </div>
-                  <span className="text-sm text-center font-medium">
-                    {compatChar}
-                  </span>
-                  <span className="text-xs text-center text-muted mt-1">
-                    {getCompatibleReason(characterName, compatChar)}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted col-span-2">
-                호환되는 캐릭터 정보가 없습니다.
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* 맞지 않는 캐릭터 */}
-        {incompatible && (
-          <div className="space-y-2">
-            <h4 className="text-base sm:text-lg font-medium text-accent">
-              맞지 않는 캐릭터
-            </h4>
-            <div className="flex flex-col sm:flex-row items-center p-3 bg-primary-light bg-opacity-20 rounded-lg">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent mb-2 sm:mb-0 sm:mr-4">
+        {/* 모바일 반응형 캐릭터 이미지와 정보 레이아웃 */}
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
+          <div className="w-full md:w-1/3 flex flex-col items-center">
+            <div className="avatar-container w-36 h-36 sm:w-48 sm:h-48 md:w-full md:max-w-[250px] md:h-auto aspect-square mb-4">
+              {image || getDefaultImage(characterName) ? (
                 <img
-                  src={getDefaultImage(incompatible) || ""}
-                  alt={incompatible}
-                  className="w-full h-full object-cover"
+                  src={image || getDefaultImage(characterName) || ""}
+                  alt={characterName}
+                  className="avatar-image"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
+                    e.currentTarget.src = ""; // 에러 시 빈 이미지로
+                    e.currentTarget.style.background = `var(--accent)`;
                     e.currentTarget.style.display = "flex";
                     e.currentTarget.style.alignItems = "center";
                     e.currentTarget.style.justifyContent = "center";
-                    e.currentTarget.style.background = `var(--accent)`;
+                    e.currentTarget.setAttribute(
+                      "data-content",
+                      characterName.charAt(0)
+                    );
+
+                    // 첫 글자를 보여주는 가상 요소 생성
+                    const textNode = document.createTextNode(
+                      characterName.charAt(0)
+                    );
+                    e.currentTarget.appendChild(textNode);
+                    e.currentTarget.style.fontSize = "2.5rem";
                     e.currentTarget.style.color = "white";
-                    e.currentTarget.style.fontSize = "1.5rem";
                     e.currentTarget.style.fontWeight = "bold";
-                    e.currentTarget.textContent = incompatible.charAt(0);
                   }}
                 />
+              ) : (
+                <div className="avatar-fallback">{characterName.charAt(0)}</div>
+              )}
+            </div>
+
+            {/* 캐릭터 명언 (모바일에서는 이미지 아래에 표시) */}
+            {mounted && randomQuote && (
+              <div className="italic text-sm text-center text-muted mb-4 md:mb-0 p-4 rounded-md bg-primary-light bg-opacity-20">
+                &ldquo;{randomQuote}&rdquo;
               </div>
-              <div>
-                <span className="text-base font-medium block text-center sm:text-left">
-                  {incompatible}
-                </span>
-                <span className="text-sm text-muted block mt-1 text-center sm:text-left">
-                  {getIncompatibleReason(characterName, incompatible)}
-                </span>
-              </div>
+            )}
+          </div>
+
+          <div className="w-full md:w-2/3 space-y-4">
+            <p className="text-sm sm:text-base leading-relaxed mb-4">
+              {characterDesc}
+            </p>
+
+            {/* 캐릭터 특성 */}
+            <div className="space-y-3">
+              {getAttributes(characterName).map((attr, index) => (
+                <div key={index} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span>{attr.name}</span>
+                    <span>{attr.value}/10</span>
+                  </div>
+                  <div className="stat-bar-container">
+                    <div
+                      className={`stat-bar stat-bar-${attr.type}`}
+                      style={{ width: `${attr.value * 10}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        )}
+        </div>
+
+        {/* 캐릭터 관계 정보 */}
+        <div className="space-y-6 mt-8">
+          <h3 className="soft-title text-lg sm:text-xl">캐릭터 관계</h3>
+
+          {/* 서로 잘 맞는 캐릭터들 */}
+          <div className="space-y-2">
+            <h4 className="text-base sm:text-lg font-medium text-accent">
+              잘 맞는 캐릭터
+            </h4>
+            <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
+              {compatibles.length > 0 ? (
+                compatibles.map((compatChar, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center p-2 bg-primary-light bg-opacity-20 rounded-lg"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent mb-2">
+                      <img
+                        src={getDefaultImage(compatChar) || ""}
+                        alt={compatChar}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.style.display = "flex";
+                          e.currentTarget.style.alignItems = "center";
+                          e.currentTarget.style.justifyContent = "center";
+                          e.currentTarget.style.background = `var(--accent)`;
+                          e.currentTarget.style.color = "white";
+                          e.currentTarget.style.fontSize = "1.5rem";
+                          e.currentTarget.style.fontWeight = "bold";
+                          e.currentTarget.textContent = compatChar.charAt(0);
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm text-center font-medium">
+                      {compatChar}
+                    </span>
+                    <span className="text-xs text-center text-muted mt-1">
+                      {getCompatibleReason(characterName, compatChar)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted col-span-2">
+                  호환되는 캐릭터 정보가 없습니다.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* 맞지 않는 캐릭터 */}
+          {incompatible && (
+            <div className="space-y-2">
+              <h4 className="text-base sm:text-lg font-medium text-accent">
+                맞지 않는 캐릭터
+              </h4>
+              <div className="flex flex-col sm:flex-row items-center p-3 bg-primary-light bg-opacity-20 rounded-lg">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent mb-2 sm:mb-0 sm:mr-4">
+                  <img
+                    src={getDefaultImage(incompatible) || ""}
+                    alt={incompatible}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.style.display = "flex";
+                      e.currentTarget.style.alignItems = "center";
+                      e.currentTarget.style.justifyContent = "center";
+                      e.currentTarget.style.background = `var(--accent)`;
+                      e.currentTarget.style.color = "white";
+                      e.currentTarget.style.fontSize = "1.5rem";
+                      e.currentTarget.style.fontWeight = "bold";
+                      e.currentTarget.textContent = incompatible.charAt(0);
+                    }}
+                  />
+                </div>
+                <div>
+                  <span className="text-base font-medium block text-center sm:text-left">
+                    {incompatible}
+                  </span>
+                  <span className="text-sm text-muted block mt-1 text-center sm:text-left">
+                    {getIncompatibleReason(characterName, incompatible)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 버튼 그룹 - 모바일에서는 스택으로, 데스크톱에서는 나란히 배치 */}
@@ -648,6 +743,34 @@ export function Result({
             <line x1="12" y1="2" x2="12" y2="15"></line>
           </svg>
           결과 공유하기
+        </button>
+
+        <button
+          onClick={handleCapture}
+          disabled={isCapturing}
+          className="soft-button-secondary w-full sm:w-auto px-6 py-3 rounded-lg flex items-center justify-center"
+          onTouchEnd={(e) => {
+            e.preventDefault(); // 기본 터치 이벤트 방지
+            if (!isCapturing) handleCapture();
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mr-2"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          {isCapturing ? "캡쳐 중..." : "결과 이미지로 저장"}
         </button>
       </div>
 

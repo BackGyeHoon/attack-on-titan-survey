@@ -7,19 +7,26 @@
 
 :root {
   /* 기본 색상 */
-  --background: #1a1a1a;
-  --card-bg: rgba(30, 30, 30, 0.7);
+  --background: #121212;
+  --card-bg: #1a1a1a;
   --foreground: #f8e8d8;
-  --primary: #ff7a5c;
-  --primary-light: rgba(58, 42, 39, 0.7);
+  --primary: #e74c3c;
+  --primary-light: #f5645e;
+  --primary-dark: #c0392b;
   --secondary: #8b939e;
-  --accent: #ff9c6b;
+  --accent: #2c3e50;
   --muted: #b3a49e;
   --border: #473630;
   --shadow-color: rgba(0, 0, 0, 0.3);
   --shadow-highlight: rgba(255, 255, 255, 0.05);
   --font-title: "Black Han Sans", sans-serif;
   --font-body: "Nanum Gothic", sans-serif;
+  --card-border: #333;
+  --text: #eaeaea;
+  --text-muted: #aaa;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
 
   /* 표준 간격 */
   --spacing-1: 0.25rem;
@@ -368,51 +375,87 @@ body::after {
 }
 
 .soft-button {
-  background: rgba(58, 42, 39, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background-color: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.soft-button:hover {
+  background-color: #252525;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.soft-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .soft-button-primary {
-  background: var(--primary);
+  background-color: var(--primary);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  font-weight: 600;
 }
 
-.titan-button:hover,
-.soft-button:hover,
 .soft-button-primary:hover {
-  background: var(--primary);
-  color: white;
+  background-color: var(--primary-light);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
-.titan-button:active,
-.soft-button:active,
 .soft-button-primary:active {
+  background-color: var(--primary-dark);
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
-/* 오래된 기기 또는 iOS에서 터치 이벤트 지원 개선 */
-@media (pointer: coarse) {
-  .titan-button,
-  .soft-button,
-  .soft-button-primary {
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
-  }
+/* 결과 이미지 저장 버튼 스타일 */
+.soft-button-secondary {
+  background-color: #3498db; /* 블루 컬러 */
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
 
-  /* 터치 피드백 */
-  .titan-button:active,
-  .soft-button:active,
-  .soft-button-primary:active {
-    opacity: 0.8;
-  }
+.soft-button-secondary:hover {
+  background-color: #4aa3df;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.soft-button-secondary:active {
+  background-color: #2980b9;
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.soft-button-secondary:disabled {
+  background-color: #95a5a6;
+  color: #eee;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 결과 컨테이너 스타일 */
+.result-container {
+  transition: all 0.3s ease;
+}
+
+/* 캡쳐 중 스타일 */
+.capturing {
+  background-color: var(--card-bg) !important;
+  padding: 20px !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 /* 아바타 컨테이너 */

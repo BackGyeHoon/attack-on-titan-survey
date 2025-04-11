@@ -16,7 +16,6 @@ export const metadata: Metadata = {
         alt: "진격의 거인 캐릭터 테스트",
       },
     ],
-    locale: "ko_KR",
     type: "website",
   },
   twitter: {
