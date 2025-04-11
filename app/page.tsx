@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Question } from "../components/survey/Question";
 import { Result } from "../components/survey/Result";
+import { useSearchParams } from "next/navigation";
 
 // 사용자 성향 점수 인터페이스
 interface UserTraits {
@@ -485,68 +486,49 @@ const characters: Character[] = [
   },
 ];
 
-export default function Home() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  const [result, setResult] = useState<(typeof characters)[0] | null>(null);
+// URL 매개변수를 처리하는 컴포넌트
+function SearchParamsHandler({
+  onSelectCharacter,
+}: {
+  onSelectCharacter: (character: Character) => void;
+}) {
+  const searchParams = useSearchParams();
 
-  // URL에서 캐릭터 파라미터 가져오기
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const charParam = urlParams.get("char");
+    const charParam = searchParams?.get("char");
 
-      // 캐릭터 파라미터가 있으면 결과 표시
-      if (charParam) {
-        const decodedCharName = decodeURIComponent(charParam);
-        // 해당 캐릭터 찾기
-        const foundChar = characters.find((c) => c.name === decodedCharName);
+    if (charParam) {
+      // URL에서 캐릭터 매개변수를 찾으면 결과 페이지 바로 표시
+      const foundCharacter = characters.find(
+        (char) => char.name === decodeURIComponent(charParam)
+      );
 
-        if (foundChar) {
-          // 결과 계산 및 표시 (호환되는 캐릭터와 호환되지 않는 캐릭터 설정)
-          setResult({
-            ...foundChar,
-            compatibleCharacters: getCompatibleCharacters(decodedCharName),
-            incompatibleCharacter: getIncompatibleCharacter(decodedCharName),
-          });
-        }
+      if (foundCharacter) {
+        onSelectCharacter(foundCharacter);
       }
     }
-  }, []);
+  }, [searchParams, onSelectCharacter]);
 
-  // 호환되는 캐릭터 가져오기 (임의로 2개 선택)
-  const getCompatibleCharacters = (mainCharName: string): string[] => {
-    // 메인 캐릭터를 제외한 나머지 캐릭터 중에서 2개 선택
-    const otherChars = characters
-      .filter((c) => c.name !== mainCharName)
-      .map((c) => c.name);
+  return null;
+}
 
-    // 무작위로 섞기
-    const shuffled = [...otherChars].sort(() => 0.5 - Math.random());
+export default function Home() {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [selectedCharacter, setSelectedCharacter] = useState<null | Character>(
+    null
+  );
 
-    // 앞에서 2개 선택
-    return shuffled.slice(0, 2);
-  };
-
-  // 호환되지 않는 캐릭터 가져오기 (임의로 1개 선택)
-  const getIncompatibleCharacter = (mainCharName: string): string => {
-    // 메인 캐릭터를 제외한 나머지 캐릭터 중에서 선택
-    const otherChars = characters
-      .filter((c) => c.name !== mainCharName)
-      .map((c) => c.name);
-
-    // 무작위로 섞기
-    const shuffled = [...otherChars].sort(() => 0.5 - Math.random());
-
-    // 첫 번째 선택
-    return shuffled[0];
+  // URL 파라미터를 처리하여 특정 캐릭터 결과 페이지로 바로 이동
+  const handleSelectCharacter = (character: Character) => {
+    setSelectedCharacter(character);
   };
 
   // 브라우저 환경에서만 실행되도록 useEffect 사용
   useEffect(() => {
     // 페이지 로드 시 스크롤을 맨 위로 이동
     window.scrollTo(0, 0);
-  }, [currentQuestion, result]);
+  }, [currentQuestionIndex, selectedCharacter]);
 
   // 문제 진행 상태에 따른 body 클래스 업데이트
   useEffect(() => {
@@ -562,11 +544,12 @@ export default function Home() {
       );
 
       // 결과 화면인 경우 progress-100 적용
-      if (result) {
+      if (selectedCharacter) {
         document.body.classList.add("progress-100");
       } else {
         // 진행도에 따른 클래스 적용
-        const progressPercentage = (currentQuestion / questions.length) * 100;
+        const progressPercentage =
+          (currentQuestionIndex / questions.length) * 100;
         if (progressPercentage === 0) {
           document.body.classList.add("progress-0");
         } else if (progressPercentage <= 20) {
@@ -582,20 +565,20 @@ export default function Home() {
         }
       }
     }
-  }, [currentQuestion, result]);
+  }, [currentQuestionIndex, selectedCharacter]);
 
   const handleAnswer = (answer: string) => {
-    const newAnswers = [...answers, answer];
-    setAnswers(newAnswers);
+    const newAnswers = [...userAnswers, answer];
+    setUserAnswers(newAnswers);
 
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
       // 다음 질문으로 이동
-      setCurrentQuestion(currentQuestion + 1);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       // 마지막 질문에 답변했을 때
       // 결과를 계산하고 상태 설정
       const result = determineCharacter(newAnswers);
-      setResult(result);
+      setSelectedCharacter(result);
     }
   };
 
@@ -1035,51 +1018,33 @@ export default function Home() {
       compatibleCharacters,
       incompatibleCharacter,
       personalityMatch: matchDescription, // matchDescription 사용
-      userTraits: normalizeTrait(userTraits), // 사용자 성향 정규화하여 추가
     };
-  };
-
-  // 성향 점수를 3-10 사이로 정규화하는 함수
-  const normalizeTrait = (traits: UserTraits): UserTraits => {
-    const normalized: UserTraits = {
-      leadership: Math.min(
-        Math.max(Math.round(traits.leadership * 1.3) + 2, 3),
-        10
-      ),
-      empathy: Math.min(Math.max(Math.round(traits.empathy * 1.3) + 2, 3), 10),
-      analytical: Math.min(
-        Math.max(Math.round(traits.analytical * 1.3) + 2, 3),
-        10
-      ),
-      courage: Math.min(Math.max(Math.round(traits.courage * 1.3) + 2, 3), 10),
-      loyalty: Math.min(Math.max(Math.round(traits.loyalty * 1.3) + 2, 3), 10),
-      creativity: Math.min(
-        Math.max(Math.round(traits.creativity * 1.3) + 2, 3),
-        10
-      ),
-    };
-    return normalized;
   };
 
   // 결과 리셋 및 다시 시작
   const resetSurvey = () => {
-    setCurrentQuestion(0);
-    setAnswers([]);
-    setResult(null);
+    setCurrentQuestionIndex(0);
+    setUserAnswers([]);
+    setSelectedCharacter(null);
   };
 
   // 진행 상태 계산
-  const progressPercentage = (currentQuestion / questions.length) * 100;
+  const progressPercentage = (currentQuestionIndex / questions.length) * 100;
 
   return (
     <main className="min-h-screen pb-12">
+      {/* SearchParams를 처리하는 컴포넌트를 Suspense로 감싸기 */}
+      <Suspense fallback={null}>
+        <SearchParamsHandler onSelectCharacter={handleSelectCharacter} />
+      </Suspense>
+
       <div className="soft-card p-4 md:p-8 mx-3 sm:mx-auto my-4 sm:my-8 relative max-w-3xl">
         {/* 모바일에서도 보기 좋은 진행 표시줄 */}
-        {!result && (
+        {!selectedCharacter && (
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-muted">
-                질문 {currentQuestion + 1} / {questions.length}
+                질문 {currentQuestionIndex + 1} / {questions.length}
               </span>
               <span className="text-sm text-muted">
                 {progressPercentage.toFixed(0)}% 완료
@@ -1095,20 +1060,22 @@ export default function Home() {
         )}
 
         {/* 시작 화면 및 질문 */}
-        {!result && (
+        {!selectedCharacter && (
           <div className="question-container">
             <Question
-              question={questions[currentQuestion].text}
-              options={questions[currentQuestion].options}
+              question={questions[currentQuestionIndex].text}
+              options={questions[currentQuestionIndex].options}
               onAnswer={handleAnswer}
-              questionIndex={currentQuestion}
-              questionNumber={currentQuestion + 1}
+              questionIndex={currentQuestionIndex}
+              questionNumber={currentQuestionIndex + 1}
             />
           </div>
         )}
 
         {/* 결과 화면 */}
-        {result && <Result character={result} onReset={resetSurvey} />}
+        {selectedCharacter && (
+          <Result character={selectedCharacter} onReset={resetSurvey} />
+        )}
       </div>
     </main>
   );
