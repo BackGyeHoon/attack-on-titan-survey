@@ -1,5 +1,5 @@
 /* 구글 폰트 @import */
-@import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -347,10 +347,10 @@ body::after {
 .titan-header,
 .soft-title {
   font-family: var(--font-title);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.5px;
   color: var(--accent);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .soft-title {
@@ -486,19 +486,23 @@ body::after {
   font-weight: bold;
 }
 
-/* 특성 바 */
+/* 스탯 바 컨테이너 스타일 */
 .stat-bar-container {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  height: 10px;
-  margin-bottom: 1rem;
+  width: 100%;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* 스탯 바 기본 스타일 */
 .stat-bar {
   height: 100%;
-  border-radius: 8px;
-  transition: width 0.8s ease;
+  min-width: 10%;
+  border-radius: 6px;
+  transition: width 0.5s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .stat-bar-strength {
@@ -580,4 +584,46 @@ body::after {
     min-height: 44px; /* 터치 영역 확보 */
     margin-bottom: var(--spacing-2);
   }
+}
+
+/* 성향 분석 결과 카드 스타일 */
+.personality-match-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 성향 점수 아이콘 스타일 */
+.trait-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 8px;
+  font-size: 12px;
+  color: white;
+}
+
+/* 결과 컨테이너 내부 섹션 구분 */
+.result-section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.result-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* text-primary 클래스 추가 */
+.text-primary {
+  color: var(--primary);
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.3);
 }

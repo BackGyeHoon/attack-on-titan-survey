@@ -1,13 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import html2canvas from "html2canvas";
+import Image from "next/image";
 
 // Character 인터페이스 정의
 interface Character {
   name: string;
   description: string;
+  personalityMatch?: string;
   image?: string;
   compatibleCharacters?: string[];
   incompatibleCharacter?: string;
+  userTraits?: UserTraits;
+}
+
+// 사용자 성향 인터페이스
+interface UserTraits {
+  leadership: number;
+  empathy: number;
+  analytical: number;
+  courage: number;
+  loyalty: number;
+  creativity: number;
 }
 
 interface ResultProps {
@@ -56,179 +69,6 @@ const getDefaultImage = (name: string): string | null => {
   };
 
   return imageMap[name] || null;
-};
-
-// 캐릭터 특성 정보 가져오기
-const getAttributes = (name: string) => {
-  // 속성 타입 정의
-  type Attribute = {
-    name: string;
-    value: number;
-    type: string;
-  };
-
-  // 캐릭터별 특성 값
-  const characterAttributes: Record<
-    string,
-    {
-      strength: number;
-      intelligence: number;
-      leadership: number;
-      compassion: number;
-    }
-  > = {
-    "에렌 예거": { strength: 8, intelligence: 6, leadership: 7, compassion: 4 },
-    "미카사 아커만": {
-      strength: 10,
-      intelligence: 7,
-      leadership: 6,
-      compassion: 6,
-    },
-    "아르민 알레르트": {
-      strength: 4,
-      intelligence: 10,
-      leadership: 8,
-      compassion: 9,
-    },
-    "리바이 아커만": {
-      strength: 10,
-      intelligence: 8,
-      leadership: 9,
-      compassion: 6,
-    },
-    "엘빈 스미스": {
-      strength: 7,
-      intelligence: 10,
-      leadership: 10,
-      compassion: 5,
-    },
-    "한지 조에": {
-      strength: 6,
-      intelligence: 10,
-      leadership: 8,
-      compassion: 7,
-    },
-    "지크 예거": { strength: 7, intelligence: 9, leadership: 8, compassion: 4 },
-    "라이너 브라운": {
-      strength: 9,
-      intelligence: 6,
-      leadership: 7,
-      compassion: 7,
-    },
-    "애니 레온하트": {
-      strength: 9,
-      intelligence: 8,
-      leadership: 5,
-      compassion: 3,
-    },
-    "베르톨트 후버": {
-      strength: 8,
-      intelligence: 7,
-      leadership: 5,
-      compassion: 6,
-    },
-    "히스토리아 레이스": {
-      strength: 5,
-      intelligence: 7,
-      leadership: 8,
-      compassion: 9,
-    },
-    "가비 브라운": {
-      strength: 7,
-      intelligence: 6,
-      leadership: 6,
-      compassion: 3,
-    },
-    "팔코 그라이스": {
-      strength: 5,
-      intelligence: 7,
-      leadership: 6,
-      compassion: 9,
-    },
-    "피크 핑거": { strength: 7, intelligence: 9, leadership: 7, compassion: 6 },
-    "코니 스프링거": {
-      strength: 7,
-      intelligence: 6,
-      leadership: 5,
-      compassion: 8,
-    },
-    "사샤 블라우스": {
-      strength: 7,
-      intelligence: 5,
-      leadership: 5,
-      compassion: 8,
-    },
-    "장 키르슈타인": {
-      strength: 8,
-      intelligence: 7,
-      leadership: 8,
-      compassion: 6,
-    },
-    "그리샤 예거": {
-      strength: 6,
-      intelligence: 9,
-      leadership: 7,
-      compassion: 6,
-    },
-    "카를라 예거": {
-      strength: 3,
-      intelligence: 6,
-      leadership: 5,
-      compassion: 10,
-    },
-    "프록 폴스타": {
-      strength: 6,
-      intelligence: 6,
-      leadership: 7,
-      compassion: 2,
-    },
-    "케니 아커만": {
-      strength: 9,
-      intelligence: 8,
-      leadership: 7,
-      compassion: 3,
-    },
-    "도트 픽시스": {
-      strength: 6,
-      intelligence: 8,
-      leadership: 9,
-      compassion: 7,
-    },
-    유미르: { strength: 8, intelligence: 7, leadership: 6, compassion: 5 },
-    "포르코 갤리아드": {
-      strength: 8,
-      intelligence: 6,
-      leadership: 5,
-      compassion: 4,
-    },
-    "마르코 보트": {
-      strength: 6,
-      intelligence: 7,
-      leadership: 7,
-      compassion: 9,
-    },
-    "이렌 다크스파이크": {
-      strength: 10,
-      intelligence: 9,
-      leadership: 9,
-      compassion: 2,
-    },
-    // 기본값
-    default: { strength: 7, intelligence: 7, leadership: 7, compassion: 7 },
-  };
-
-  // 캐릭터에 해당하는 특성 값 가져오기 (없으면 기본값 사용)
-  const attrs = characterAttributes[name] || characterAttributes["default"];
-
-  // 배열 형태로 변환하여 반환
-  const attributeList: Attribute[] = [
-    { name: "전투력", value: attrs.strength, type: "strength" },
-    { name: "지능", value: attrs.intelligence, type: "intelligence" },
-    { name: "리더십", value: attrs.leadership, type: "leadership" },
-    { name: "공감능력", value: attrs.compassion, type: "compassion" },
-  ];
-
-  return attributeList;
 };
 
 // 기본 호환 캐릭터 가져오기
@@ -366,6 +206,32 @@ export function Result({
   const characterName = getCharacterName(character);
   const characterDesc =
     description || (typeof character === "object" ? character.description : "");
+
+  // 사용자 성향 데이터 가져오기
+  const userTraits =
+    typeof character === "object" && character.userTraits
+      ? character.userTraits
+      : null;
+
+  // 성향 이름 매핑
+  const traitNames = {
+    leadership: "리더십",
+    empathy: "공감력",
+    analytical: "분석력",
+    courage: "용기",
+    loyalty: "충성심",
+    creativity: "창의성",
+  };
+
+  // 성향 색상 매핑
+  const traitColors = {
+    leadership: "var(--primary)",
+    empathy: "#3498db",
+    analytical: "#9b59b6",
+    courage: "#e67e22",
+    loyalty: "#2ecc71",
+    creativity: "#f1c40f",
+  };
 
   // 호환 캐릭터 처리
   const compatibles =
@@ -524,10 +390,10 @@ export function Result({
     <div className="w-full space-y-6">
       <div ref={resultRef} className="result-container">
         <div className="text-center mb-4">
-          <h2 className="soft-title text-xl sm:text-2xl md:text-3xl mb-3">
+          <h2 className="soft-title text-xl sm:text-2xl md:text-3xl mb-3 tracking-normal">
             당신과 가장 닮은 캐릭터는
           </h2>
-          <h1 className="soft-title text-2xl sm:text-3xl md:text-4xl text-primary">
+          <h1 className="soft-title text-2xl sm:text-3xl md:text-4xl text-primary tracking-normal">
             {characterName}
           </h1>
         </div>
@@ -537,29 +403,43 @@ export function Result({
           <div className="w-full md:w-1/3 flex flex-col items-center">
             <div className="avatar-container w-36 h-36 sm:w-48 sm:h-48 md:w-full md:max-w-[250px] md:h-auto aspect-square mb-4">
               {image || getDefaultImage(characterName) ? (
-                <img
+                <Image
                   src={image || getDefaultImage(characterName) || ""}
                   alt={characterName}
-                  className="avatar-image"
+                  className="avatar-image w-full h-full object-cover"
+                  width={250}
+                  height={250}
                   onError={(e) => {
+                    // @ts-ignore - Next.js Image에서 onError 처리 방식 변경
                     e.currentTarget.onerror = null;
+                    // @ts-ignore
                     e.currentTarget.src = ""; // 에러 시 빈 이미지로
+                    // @ts-ignore
                     e.currentTarget.style.background = `var(--accent)`;
+                    // @ts-ignore
                     e.currentTarget.style.display = "flex";
+                    // @ts-ignore
                     e.currentTarget.style.alignItems = "center";
+                    // @ts-ignore
                     e.currentTarget.style.justifyContent = "center";
+                    // @ts-ignore
                     e.currentTarget.setAttribute(
                       "data-content",
                       characterName.charAt(0)
                     );
 
                     // 첫 글자를 보여주는 가상 요소 생성
+                    // @ts-ignore
                     const textNode = document.createTextNode(
                       characterName.charAt(0)
                     );
+                    // @ts-ignore
                     e.currentTarget.appendChild(textNode);
+                    // @ts-ignore
                     e.currentTarget.style.fontSize = "2.5rem";
+                    // @ts-ignore
                     e.currentTarget.style.color = "white";
+                    // @ts-ignore
                     e.currentTarget.style.fontWeight = "bold";
                   }}
                 />
@@ -577,37 +457,62 @@ export function Result({
           </div>
 
           <div className="w-full md:w-2/3 space-y-4">
+            {/* 성향 매칭 설명 */}
+            <div className="bg-primary-light bg-opacity-20 p-4 rounded-lg mb-4 leading-relaxed">
+              {typeof character === "object" && character.personalityMatch
+                ? character.personalityMatch
+                : `당신은 ${characterName}와(과) 비슷한 성향을 가지고 있습니다. 
+                   문제 해결 방식과 가치관에서 많은 공통점이 있습니다.`}
+            </div>
+
+            {/* 캐릭터 기본 설명 */}
             <p className="text-sm sm:text-base leading-relaxed mb-4">
+              <span className="font-medium">캐릭터 설명: </span>
               {characterDesc}
             </p>
 
-            {/* 캐릭터 특성 */}
-            <div className="space-y-3">
-              {getAttributes(characterName).map((attr, index) => (
-                <div key={index} className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span>{attr.name}</span>
-                    <span>{attr.value}/10</span>
-                  </div>
-                  <div className="stat-bar-container">
-                    <div
-                      className={`stat-bar stat-bar-${attr.type}`}
-                      style={{ width: `${attr.value * 10}%` }}
-                    />
-                  </div>
+            {/* 사용자 성향 분석 */}
+            {userTraits && (
+              <div className="mt-6">
+                <h3 className="soft-title text-lg mb-3 tracking-normal">
+                  당신의 성향 분석
+                </h3>
+                <div className="space-y-3">
+                  {Object.entries(userTraits).map(([trait, value]) => (
+                    <div key={trait} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span>
+                          {traitNames[trait as keyof typeof traitNames]}
+                        </span>
+                        <span>{value}/10</span>
+                      </div>
+                      <div className="stat-bar-container">
+                        <div
+                          className="stat-bar"
+                          style={{
+                            width: `${Math.max(value * 10, 5)}%`,
+                            backgroundColor:
+                              traitColors[trait as keyof typeof traitColors],
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* 캐릭터 관계 정보 */}
         <div className="space-y-6 mt-8">
-          <h3 className="soft-title text-lg sm:text-xl">캐릭터 관계</h3>
+          <h3 className="soft-title text-lg sm:text-xl tracking-normal">
+            캐릭터 관계
+          </h3>
 
           {/* 서로 잘 맞는 캐릭터들 */}
           <div className="space-y-2">
-            <h4 className="text-base sm:text-lg font-medium text-accent">
+            <h4 className="text-base sm:text-lg font-normal text-accent">
               잘 맞는 캐릭터
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
@@ -618,24 +523,35 @@ export function Result({
                     className="flex flex-col items-center p-2 bg-primary-light bg-opacity-20 rounded-lg"
                   >
                     <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent mb-2">
-                      <img
+                      <Image
                         src={getDefaultImage(compatChar) || ""}
                         alt={compatChar}
                         className="w-full h-full object-cover"
+                        width={80}
+                        height={80}
                         onError={(e) => {
+                          // @ts-ignore
                           e.currentTarget.onerror = null;
+                          // @ts-ignore
                           e.currentTarget.style.display = "flex";
+                          // @ts-ignore
                           e.currentTarget.style.alignItems = "center";
+                          // @ts-ignore
                           e.currentTarget.style.justifyContent = "center";
+                          // @ts-ignore
                           e.currentTarget.style.background = `var(--accent)`;
+                          // @ts-ignore
                           e.currentTarget.style.color = "white";
+                          // @ts-ignore
                           e.currentTarget.style.fontSize = "1.5rem";
+                          // @ts-ignore
                           e.currentTarget.style.fontWeight = "bold";
+                          // @ts-ignore
                           e.currentTarget.textContent = compatChar.charAt(0);
                         }}
                       />
                     </div>
-                    <span className="text-sm text-center font-medium">
+                    <span className="text-sm text-center font-normal">
                       {compatChar}
                     </span>
                     <span className="text-xs text-center text-muted mt-1">
@@ -654,30 +570,41 @@ export function Result({
           {/* 맞지 않는 캐릭터 */}
           {incompatible && (
             <div className="space-y-2">
-              <h4 className="text-base sm:text-lg font-medium text-accent">
+              <h4 className="text-base sm:text-lg font-normal text-accent">
                 맞지 않는 캐릭터
               </h4>
               <div className="flex flex-col sm:flex-row items-center p-3 bg-primary-light bg-opacity-20 rounded-lg">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent mb-2 sm:mb-0 sm:mr-4">
-                  <img
+                  <Image
                     src={getDefaultImage(incompatible) || ""}
                     alt={incompatible}
                     className="w-full h-full object-cover"
+                    width={80}
+                    height={80}
                     onError={(e) => {
+                      // @ts-ignore
                       e.currentTarget.onerror = null;
+                      // @ts-ignore
                       e.currentTarget.style.display = "flex";
+                      // @ts-ignore
                       e.currentTarget.style.alignItems = "center";
+                      // @ts-ignore
                       e.currentTarget.style.justifyContent = "center";
+                      // @ts-ignore
                       e.currentTarget.style.background = `var(--accent)`;
+                      // @ts-ignore
                       e.currentTarget.style.color = "white";
+                      // @ts-ignore
                       e.currentTarget.style.fontSize = "1.5rem";
+                      // @ts-ignore
                       e.currentTarget.style.fontWeight = "bold";
+                      // @ts-ignore
                       e.currentTarget.textContent = incompatible.charAt(0);
                     }}
                   />
                 </div>
                 <div>
-                  <span className="text-base font-medium block text-center sm:text-left">
+                  <span className="text-base font-normal block text-center sm:text-left">
                     {incompatible}
                   </span>
                   <span className="text-sm text-muted block mt-1 text-center sm:text-left">
@@ -779,7 +706,7 @@ export function Result({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-xl max-w-sm w-full mx-4 border-2 border-primary">
             <div className="text-center mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                 알림
               </h3>
               <div className="mt-3">
