@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import Image from "next/image";
 
 export const metadata: Metadata = {
@@ -46,7 +47,7 @@ export default function RootLayout({
       </head>
       <body>
         {/* 비디오 배경 제거 */}
-
+        <Analytics />
         <div className="content-container">
           <header className="text-center mb-6 p-4 rounded-lg bg-black bg-opacity-70">
             <div className="flex flex-col items-center justify-center">
